@@ -1,0 +1,98 @@
+.resume-template {
+  background: var(--white);
+  border: 1px solid var(--accent);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  width: 220px;   /* preview size */
+  height: 300px;  /* preview size */
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.resume-template h1,
+.resume-template h2 {
+  margin: 0;
+  color: var(--primary);
+}
+
+.resume-template p {
+  margin: 0.2rem 0;
+  color: var(--text);
+}
+
+.resume-template ul {
+  margin: 0.3rem 0;
+  padding-left: 1rem;
+}
+
+.resume-template.modern {
+  border-left: 6px solid var(--secondary);
+}
+
+.resume-template.classic {
+  font-family: Georgia, serif;
+  border-top: 4px solid var(--primary-dark);
+}
+/* =========================
+   Classic Resume Template
+   (Reference: Left side image)
+========================= */
+
+.classic {
+  width: 800px;
+  margin: 20px auto;
+  padding: 40px;
+  background: #fff;
+  font-family: "Times New Roman", serif;
+  color: #111;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.classic h1 {
+  text-align: center;
+  font-size: 28px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+.classic .contact {
+  text-align: center;
+  font-size: 13px;
+  margin: 5px 0 20px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.classic section {
+  margin-bottom: 25px;
+}
+
+.classic h3 {
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #000;
+  padding-bottom: 3px;
+}
+
+.classic p,
+.classic ul {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 5px 0;
+}
+
+.classic ul {
+  margin-left: 20px;
+}
+
+.classic strong {
+  font-weight: bold;
+}

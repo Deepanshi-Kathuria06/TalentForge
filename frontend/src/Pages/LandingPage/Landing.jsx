@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Landing.css';
 import { Footer } from '../../components/Footer';
-import heroImage from '../../assets/images/Hero-image.jpg'; // Add your hero image path
+import Navbar from '../../components/Navbar';
 import projectImage from '../../assets/images/ZeroWaste.png'; // Add your project preview image path
 
 
@@ -37,6 +37,7 @@ export const Landing = () => {
 
   return (
     <div className="landing-container">
+      <Navbar />
         {/* New Hero Section with Globe Animation */}
        {/* New Hero Section with Globe Animation */}
 <section className="globe-hero-section">
