@@ -1,0 +1,85 @@
+/* LeetCodePage.css */
+.leetcode-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  height: 100%;
+  padding: 24px;
+}
+
+.question-panel {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  padding: 24px;
+  box-shadow: var(--box-shadow);
+  overflow-y: auto;
+}
+
+.editor-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  overflow: hidden;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: var(--gray-light);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.editor-header select {
+  padding: 8px 16px;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--text-light);
+  background: var(--white);
+}
+
+.editor-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.editor-actions button {
+  padding: 8px 16px;
+  border-radius: var(--border-radius);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.editor-actions button:first-child {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.editor-actions button:last-child {
+  background: var(--accent);
+  color: var(--text);
+}
+
+.editor-actions button:hover {
+  transform: translateY(-2px);
+}
+
+.code-editor {
+  flex: 1;
+  padding: 16px;
+  border: none;
+  resize: none;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.test-results {
+  padding: 16px 24px;
+  background: var(--gray-light);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}

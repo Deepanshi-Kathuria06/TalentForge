@@ -1,0 +1,174 @@
+.settings-container {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.settings-sidebar {
+  width: 280px;
+  padding: 16px 0;
+  border-right: 1px solid #e0e0e0;
+}
+
+.settings-sidebar h2 {
+  padding: 0 24px;
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.settings-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.settings-sidebar li {
+  padding: 12px 24px;
+  cursor: pointer;
+  color: #666;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.settings-sidebar li:hover {
+  background-color: #f3f2ef;
+}
+
+.settings-sidebar li.active {
+  background-color: #f3f2ef;
+  color: #0a66c2;
+  font-weight: 600;
+  border-left: 3px solid #0a66c2;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 8px 0;
+  padding: 0 !important;
+  cursor: default !important;
+}
+
+.settings-main {
+  flex: 1;
+  padding: 24px;
+}
+
+.settings-content h2 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.settings-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.settings-item:last-child {
+  border-bottom: none;
+}
+
+.settings-item h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0 0 4px 0;
+  color: #333;
+  cursor: pointer;
+}
+
+.settings-item h3:hover {
+  color: #0a66c2;
+  text-decoration: underline;
+}
+
+.settings-item p {
+  margin: 0 0 12px 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.toggle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #0a66c2;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.settings-button {
+  background-color: transparent;
+  color: #0a66c2;
+  border: 1px solid #0a66c2;
+  border-radius: 16px;
+  padding: 4px 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.settings-button:hover {
+  background-color: rgba(10, 102, 194, 0.1);
+}
+
+@media (max-width: 768px) {
+  .settings-container {
+    flex-direction: column;
+  }
+  
+  .settings-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+  }
+}

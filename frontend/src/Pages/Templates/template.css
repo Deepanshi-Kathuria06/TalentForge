@@ -1,0 +1,58 @@
+/* =========================
+   Modern Resume Template
+   (Reference: Right side image)
+========================= */
+
+.modern {
+  width: 800px;
+  margin: 20px auto;
+  padding: 40px;
+  background: #fff;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  color: #222;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.modern h1 {
+  font-size: 30px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.modern .contact {
+  font-size: 13px;
+  color: #555;
+  margin: 8px 0 25px;
+  line-height: 1.5;
+}
+
+.modern h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 20px 0 10px;
+  color: #333;
+  border-left: 3px solid #000;
+  padding-left: 10px;
+  text-transform: uppercase;
+}
+
+.modern section {
+  margin-bottom: 22px;
+}
+
+.modern p,
+.modern ul {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 4px 0;
+}
+
+.modern ul {
+  margin-left: 20px;
+  list-style-type: disc;
+}
+
+.modern strong {
+  font-weight: 600;
+}
