@@ -3,16 +3,15 @@ import "../ResumeBuilder/saveddesign.css";
 import { useNavigate } from "react-router-dom";  
 
 
-import ModernResume from "../Templates/ClassicResume"
-import ClassicResume from "../Templates/ModernResume"
+import ModernResume from "../Templates/ModernResume";
+import ClassicResume from "../Templates/ClassicResume";
 
 const SavedDesigns = () => {
-    const navigate = useNavigate();   // <-- add this
+  const navigate = useNavigate(); 
 
   const [activeTab, setActiveTab] = useState("templates");
   
   const [savedDesigns, setSavedDesigns] = useState([
-    
     { 
       id: 102, 
       name: "Job Application", 
@@ -20,9 +19,6 @@ const SavedDesigns = () => {
       template: "classic",
       tags: ["Corporate", "Formal"]
     },
-    
-
-
   ]);
 
   const [templates] = useState([
@@ -38,21 +34,15 @@ const SavedDesigns = () => {
       category: "Professional",
       component: <ClassicResume previewMode={true} />
     },
-   
-  
-    
-   
   ]);
 
   const [categories] = useState(["All", "Professional", "Popular"]);
   const [activeCategory, setActiveCategory] = useState("All");
   const [filteredTemplates, setFilteredTemplates] = useState(templates);
   
-  // Search and filter states
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("recent");
 
-  // Filter templates when category changes
   useEffect(() => {
     if (activeCategory === "All") {
       setFilteredTemplates(templates);
@@ -61,7 +51,6 @@ const SavedDesigns = () => {
     }
   }, [activeCategory, templates]);
 
-  // Filter and sort saved designs
   const filteredAndSortedDesigns = savedDesigns
     .filter(design => 
       design.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -69,7 +58,6 @@ const SavedDesigns = () => {
     )
     .sort((a, b) => {
       if (sortBy === "recent") {
-        // For demo purposes, we'll use ID as a proxy for date
         return b.id - a.id;
       } else if (sortBy === "oldest") {
         return a.id - b.id;
@@ -103,13 +91,17 @@ const SavedDesigns = () => {
 
   return (
     <div className="saved-designs-container">
+      {/* Hero Section */}
       <section className="saved-designs-hero">
         <div className="saved-designs-hero-content">
           <h1>Design Resumes That Get Noticed</h1>
           <p>Create, edit, and manage professional resumes that stand out from the crowd</p>
-          <button className="saved-designs-btn-hero-primary"
-        onClick={() => navigate("../ResumeBuilder/resumeEditor")}
-          >Create New Resume</button>
+          <button 
+            className="saved-designs-btn-hero-primary"
+            onClick={() => navigate("../ResumeBuilder/resumeEditor")}
+          >
+            Create New Resume
+          </button>
         </div>
         
         <div className="saved-designs-glitter-overlay">
@@ -133,6 +125,7 @@ const SavedDesigns = () => {
         <div className="saved-designs-hero-shape saved-designs-hero-shape-3"></div>
       </section>
 
+      {/* Tabs */}
       <div className="saved-designs-tabs-container">
         <div className="saved-designs-tabs">
           <button 
@@ -150,6 +143,7 @@ const SavedDesigns = () => {
         </div>
       </div>
 
+      {/* Main Content */}
       <div className="saved-designs-main-content">
         {activeTab === 'saved' ? (
           /* Saved Designs Tab */
