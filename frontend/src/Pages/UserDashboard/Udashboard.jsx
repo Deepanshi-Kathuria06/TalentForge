@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './UserDashboard.css';
-import Settings from "../UserDashboard/Sections/Settings";
 
 const CandidateDashboard = ({ user, onLogout }) => {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);

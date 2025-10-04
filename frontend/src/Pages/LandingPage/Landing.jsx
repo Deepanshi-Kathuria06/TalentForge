@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Landing.css';
 import { Footer } from '../../components/Footer';
 import Navbar from '../../components/Navbar';
-import projectImage from '../../assets/images/ZeroWaste.png'; // Add your project preview image path
+import projectImage from '../../assets/images/ZeroWaste.png'; 
 
 
 export const Landing = () => {
@@ -167,7 +167,7 @@ export const Landing = () => {
       ))}
     </div>
   </div>
-</section>
+</section>  
       {/* Interactive Resume Viewer */}
       <section className="resume-viewer-section">
         <div className="section-container2">

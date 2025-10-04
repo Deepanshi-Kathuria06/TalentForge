@@ -10,6 +10,7 @@ import ATS from "./Pages/ATS CHECKER/ATS";
 import Resume from "./Pages/ResumeBuilder/resumeEditor"
 import  Starting  from "./Pages/ResumeBuilder/starting"
 import SavedDesign from "./Pages/ResumeBuilder/saveddesign";
+import Udashboard from  "./Pages/UserDashboard/Udashboard"
 // Wrap all routes in a function component
 function MainApp() {
   return (
@@ -22,7 +23,7 @@ function MainApp() {
         <Route path="/starting" element={<Starting />} />
       <Route path="/resume-builder/saveddesign" element={<SavedDesign />} />
 <Route path="/ResumeBuilder/resumeEditor" element={<Resume />} />
-      </Routes>
+<Route path="/Udashboard" element={<Udashboard />} />      </Routes>
     </BrowserRouter>
   );
 }
