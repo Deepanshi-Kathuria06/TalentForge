@@ -117,6 +117,7 @@
 
 .rb-floating-cta {
   display: flex;
+  position: relative;
   align-items: center;
   gap: 1rem;
   padding: 1.2rem 2.5rem;
@@ -127,6 +128,7 @@
   font-size: 1.2rem;
   font-weight: 600;
   cursor: pointer;
+  bottom: 30px;
   transition: all 0.3s ease;
   box-shadow: 0 8px 20px rgba(0, 64, 48, 0.4);
 }

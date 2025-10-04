@@ -81,22 +81,7 @@ const SavedDesigns = () => {
 
   const mostRecentDesign = filteredAndSortedDesigns.length > 0 ? filteredAndSortedDesigns[0] : null;
 
-  const createGlitterParticles = () => {
-    const particles = [];
-    for (let i = 0; i < 50; i++) {
-      particles.push({
-        id: i,
-        size: Math.random() * 8 + 2,
-        left: Math.random() * 100,
-        animationDelay: Math.random() * 5,
-        animationDuration: Math.random() * 3 + 3
-      });
-    }
-    return particles;
-  };
-
-  const [glitterParticles] = useState(createGlitterParticles());
-
+ 
   const handleDeleteDesign = (id) => {
     setSavedDesigns(savedDesigns.filter(design => design.id !== id));
   };
@@ -112,22 +97,7 @@ const SavedDesigns = () => {
           >Create New Resume</button>
         </div>
         
-        <div className="saved-designs-glitter-overlay">
-          {glitterParticles.map(particle => (
-            <div 
-              key={particle.id}
-              className="saved-designs-glitter-particle"
-              style={{
-                width: `${particle.size}px`,
-                height: `${particle.size}px`,
-                left: `${particle.left}%`,
-                animationDelay: `${particle.animationDelay}s`,
-                animationDuration: `${particle.animationDuration}s`
-              }}
-            ></div>
-          ))}
-        </div>
-
+     
         <div className="saved-designs-hero-shape saved-designs-hero-shape-1"></div>
         <div className="saved-designs-hero-shape saved-designs-hero-shape-2"></div>
         <div className="saved-designs-hero-shape saved-designs-hero-shape-3"></div>
