@@ -14,7 +14,12 @@ import CompanyDashboard from "./Pages/CompanyDashboard/CompanyDashboard.jsx";
 import Udashboard from "./Pages/UserDashboard/Udashboard";
 import Dashboard from "./Pages/UserDashboard/Dashboard";
 import SavedDesign from "./Pages/ResumeBuilder/saveddesign";
+
 import { AuthProvider } from '../src/Pages/Auth/AuthContext';
+
+
+
+// Wrap all routes in a function component
 
 function MainApp() {
   return (
@@ -25,12 +30,14 @@ function MainApp() {
         <Route path="/login" element={<Login />} />
         <Route path="/ATS" element={<ATS />} />
         <Route path="/starting" element={<Starting />} />
+
         <Route path="/CompanyDashboard" element={<CompanyDashboard />} />
         <Route path="/Udashboard" element={<Udashboard />} />
         <Route path="/Dashboard" element={<Dashboard />} />
         <Route path="/resume-builder/saveddesign" element={<SavedDesign />} />
         <Route path="/ResumeBuilder/resumeEditor" element={<Resume />} />
       </Routes>
+
     </BrowserRouter>
   );
 }

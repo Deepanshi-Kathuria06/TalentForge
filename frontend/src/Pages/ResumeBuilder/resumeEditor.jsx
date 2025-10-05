@@ -80,8 +80,8 @@ const ResumeBuilder = () => {
 
   return (
     <div className="resume-builder-container">
-      <header className="resume-header1">
-        <div className="logo-section1">
+      <header className="resume-header">
+        <div className="logo-section">
           <h1 className="logo">ResumeBuilder</h1>
           <span className="logo-subtitle">Professional Resume Builder</span>
         </div>
@@ -138,9 +138,9 @@ const ResumeBuilder = () => {
         </div>
       )}
       
-      <div className="content">
+      <div className="content1">
         <div className="sidebar-container1">
-          <div className="tab-navigation">
+          <div className="tab-navigation1">
             {tabs.map(tab => (
               <button
                 key={tab.id}

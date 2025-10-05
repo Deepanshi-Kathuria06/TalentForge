@@ -277,7 +277,7 @@ export const Landing = () => {
       <section className="project-viewer-section">
         <div className="section-container">
           <h2 className="title">Showcase Your Work</h2>
-          <p className="section-subtitle1">Present your projects interactively to potential employers</p>
+          <p className="section-subtitle">Present your projects interactively to potential employers</p>
           
           <div className="project-viewer-container">
             <div className="project-display">
