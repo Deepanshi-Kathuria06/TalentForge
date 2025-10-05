@@ -10,7 +10,7 @@ import PyPDF2
 import docx
 import io
 
-# Initialize FastAPI app - THIS MUST BE NAMcdED 'app'
+
 app = FastAPI(title="ATS Checker API", version="1.0.0")
 
 # Add CORS middleware

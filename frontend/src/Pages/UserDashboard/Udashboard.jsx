@@ -812,7 +812,7 @@ const CandidateDashboard = ({ user, onLogout }) => {
                           onClick={() => setActiveChat(message.id)}
                         >
                           <img 
-                            src={`https://randomuser.me/api/portraits/${message.name === 'Sarah Johnson' ? 'women' : 'men'}/${message.id * 10}.jpg`} 
+                            src={`https://randomuser.me/api/portraits/${message.name === 'Sneha' ? 'women' : 'men'}/${message.id * 10}.jpg`} 
                             alt={message.name} 
                             className="chat-avatar"
                           />
@@ -841,7 +841,7 @@ const CandidateDashboard = ({ user, onLogout }) => {
                       {messages.slice(0, 2).map(message => (
                         <div key={message.id} className="chat-preview-item">
                           <img 
-                            src={`https://randomuser.me/api/portraits/${message.name === 'Sarah Johnson' ? 'women' : 'men'}/${message.id * 10}.jpg`} 
+                            src={`https://randomuser.me/api/portraits/${message.name === 'Deepanshi' ? 'women' : 'men'}/${message.id * 10}.jpg`} 
                             alt={message.name} 
                             className="chat-preview-avatar"
                           />
