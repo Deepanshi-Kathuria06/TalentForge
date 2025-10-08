@@ -36,13 +36,13 @@ export const Landing = () => {
   }, [activeResumeTab]);
 
   return (
-    <div className="landing-container-1">
+    <div className="landing-container">
       <Navbar />
         {/* New Hero Section with Globe Animation */}
        {/* New Hero Section with Globe Animation */}
 <section className="globe-hero-section">
   <div className="globe-container">
-    <div className="globe1">
+    <div className="globe">
       <div className="globe-surface"></div>
       <div className="globe-inner-glow"></div>
       
@@ -58,7 +58,7 @@ export const Landing = () => {
     <p className="hero-subtitle">
       This platform bridges the gap between <span className="highlight-text">top talent</span> and <span className="highlight-text">dream opportunities</span> in real-time, with the scale to power career transformations worldwide.
     </p>
-    <div className="cta-buttons1">
+    <div className="cta-buttons">
       <button className="primary-btn">Join the Network</button>
       <button className="secondary-btn">See How It Works</button>
     </div>

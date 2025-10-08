@@ -1,55 +1,152 @@
+/* =========================
+   BASE RESUME TEMPLATE STYLES
+   (Works for both preview and editor)
+========================= */
+.resume-template {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
+/* =========================
+   PREVIEW MODE (Template Gallery)
+========================= */
+.resume-template.preview {
+  width: 220px;
+  height: 300px;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  overflow: hidden;
+  line-height: 1.3;
+}
 
-.modern {
+/* =========================
+   EDITOR MODE (Resume Builder)
+========================= */
+.resume-template.editor {
   width: 800px;
   margin: 20px auto;
   padding: 40px;
-  background: #fff;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* =========================
+   CLASSIC TEMPLATE STYLES
+========================= */
+.resume-template.classic {
+  font-family: "Times New Roman", serif;
+  color: #111;
+  border: 1px solid #ccc;
+}
+
+.resume-template.classic h1 {
+  text-align: center;
+  font-size: inherit;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.resume-template.classic .contact {
+  text-align: center;
+  margin: 5px 0 15px;
+  color: #444;
+}
+
+.resume-template.classic section {
+  margin-bottom: 15px;
+}
+
+.resume-template.classic h2,
+.resume-template.classic h3 {
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #000;
+  padding-bottom: 3px;
+}
+
+.resume-template.classic ul {
+  margin-left: 15px;
+}
+
+.resume-template.classic strong {
+  font-weight: bold;
+}
+
+/* Classic - Preview Mode Adjustments */
+.resume-template.classic.preview h1 { font-size: 0.9rem; }
+.resume-template.classic.preview h2,
+.resume-template.classic.preview h3 { font-size: 0.75rem; }
+.resume-template.classic.preview .contact { font-size: 0.65rem; }
+.resume-template.classic.preview p,
+.resume-template.classic.preview ul { font-size: 0.65rem; }
+
+/* Classic - Editor Mode Adjustments */
+.resume-template.classic.editor h1 { font-size: 28px; }
+.resume-template.classic.editor h2,
+.resume-template.classic.editor h3 { font-size: 16px; }
+.resume-template.classic.editor .contact { font-size: 13px; }
+.resume-template.classic.editor p,
+.resume-template.classic.editor ul { font-size: 14px; }
+
+/* =========================
+   MODERN TEMPLATE STYLES
+========================= */
+.resume-template.modern {
   font-family: "Helvetica Neue", Arial, sans-serif;
   color: #222;
   border: 1px solid #e0e0e0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-.modern h1 {
-  font-size: 30px;
+.resume-template.modern h1 {
   font-weight: 700;
   margin: 0;
 }
 
-.modern .contact {
-  font-size: 13px;
+.resume-template.modern .contact {
   color: #555;
-  margin: 8px 0 25px;
-  line-height: 1.5;
+  margin: 8px 0 20px;
 }
 
-.modern h2 {
-  font-size: 18px;
+.resume-template.modern h2 {
   font-weight: 600;
-  margin: 20px 0 10px;
+  margin: 15px 0 8px;
   color: #333;
   border-left: 3px solid #000;
   padding-left: 10px;
   text-transform: uppercase;
 }
 
-.modern section {
-  margin-bottom: 22px;
+.resume-template.modern section {
+  margin-bottom: 18px;
 }
 
-.modern p,
-.modern ul {
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 4px 0;
-}
-
-.modern ul {
+.resume-template.modern ul {
   margin-left: 20px;
   list-style-type: disc;
 }
 
-.modern strong {
+.resume-template.modern strong {
   font-weight: 600;
 }
+
+/* Modern - Preview Mode Adjustments */
+.resume-template.modern.preview h1 { font-size: 0.9rem; }
+.resume-template.modern.preview h2 { font-size: 0.75rem; border-left-width: 2px; padding-left: 6px; }
+.resume-template.modern.preview .contact { font-size: 0.65rem; }
+.resume-template.modern.preview p,
+.resume-template.modern.preview ul { font-size: 0.65rem; }
+
+/* Modern - Editor Mode Adjustments */
+.resume-template.modern.editor h1 { font-size: 30px; }
+.resume-template.modern.editor h2 { font-size: 18px; }
+.resume-template.modern.editor .contact { font-size: 13px; }
+.resume-template.modern.editor p,
+.resume-template.modern.editor ul { font-size: 14px; }

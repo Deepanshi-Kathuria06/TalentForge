@@ -131,10 +131,10 @@ body {
 /* Template Selector */
 .template-selector {
   position: absolute;
-  top: 100%;
-  left: 50%;
+  top: 10%;
+  left: 75%;
   transform: translateX(-50%);
-  width: 90%;
+  width: 70%;
   max-width: 800px;
   background-color: var(--surface);
   border-radius: var(--border-radius-lg);
