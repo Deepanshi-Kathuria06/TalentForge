@@ -240,7 +240,7 @@ html,body{
   align-items: center;
   justify-content: center;
   color: var(--white);
-  z-index: 2;
+  z-index: 10;
   box-shadow: var(--box-shadow);
   animation: pulse 4s ease-in-out infinite;
 }

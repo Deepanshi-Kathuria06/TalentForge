@@ -415,7 +415,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
             { icon: "fa-building", text: "Companies", page: "companies" },
             { icon: "fa-users", text: "Networking", page: "network" },
             { icon: "fa-laptop-code", text: "Challenges", page: "challenges" },
-            { icon: "fa-trophy", text: "Gamification", page: "gamification" },
             { icon: "fa-book", text: "Projects", page: "projects" },
             { icon: "fa-bell", text: "Notifications", page: "notifications" },
             { icon: "fa-cog", text: "Settings", page: "settings" },
@@ -424,7 +423,17 @@ const CandidateDashboard = ({ user, onLogout }) => {
               {/* Parent Menu Item */}
               <div
                 className={`menu-item ${activePage === item.page ? "active" : ""}`}
-                onClick={() => setActivePage(item.page)}
+                onClick={() => {
+                  if (item.page === "resume") {
+                    // Navigate to resume builder
+                    window.location.href = "/ResumeBuilder/resumeEditor";
+                  } else if (item.page === "gamification") {
+                    // Navigate to gamification section
+                    setActivePage("gamification");
+                  } else {
+                    setActivePage(item.page);
+                  }
+                }}
                 title={!sidebarExpanded ? item.text : ""}
               >
                 <span className="menu-icon"><i className={`fas ${item.icon}`}></i></span>
@@ -553,6 +562,7 @@ const CandidateDashboard = ({ user, onLogout }) => {
         );
       case "settings":
         return <Settings />;
+      
       case 'dashboard':
       default:
         return (
