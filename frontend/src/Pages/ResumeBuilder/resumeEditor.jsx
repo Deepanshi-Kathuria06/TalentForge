@@ -1,4 +1,3 @@
-// ResumeBuilder.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useLocation } from "react-router-dom";
@@ -8,7 +7,6 @@ import {
 } from 'react-icons/fa';
 import html2pdf from "html2pdf.js";
 
-// Import template components
 import ModernResume from "../Templates/ModernResume";
 import ClassicResume from "../Templates/ClassicResume";
 
@@ -17,7 +15,6 @@ import "../ResumeBuilder/Resume.css";
 const ResumeBuilder = () => {
   const location = useLocation();
   
-  // Get template from navigation state or default to 'professional'
   const [selectedTemplate, setSelectedTemplate] = useState(
     location.state?.templateType || 'professional'
   );
@@ -64,7 +61,6 @@ const ResumeBuilder = () => {
   const resumeRef = useRef();
   const formData = watch();
   
-  // Show template info when component mounts
   useEffect(() => {
     if (location.state?.templateName) {
       console.log(`Using template: ${location.state.templateName}`);
@@ -75,12 +71,10 @@ const ResumeBuilder = () => {
     const element = resumeRef.current;
     if (!element) return;
     
-    // Store original transform for restoration
     const originalTransform = element.style.transform;
     const originalWidth = element.style.width;
     const originalHeight = element.style.height;
     
-    // Reset transform for PDF generation
     element.style.transform = 'none';
     element.style.width = 'auto';
     element.style.height = 'auto';
@@ -103,7 +97,6 @@ const ResumeBuilder = () => {
       .from(element)
       .save()
       .then(() => {
-        // Restore original transform after PDF generation
         element.style.transform = originalTransform;
         element.style.width = originalWidth;
         element.style.height = originalHeight;
@@ -111,11 +104,11 @@ const ResumeBuilder = () => {
   };
   
   const zoomIn = () => {
-    setPreviewScale(prev => Math.min(prev + 0.1, 2)); // Max zoom 200%
+    setPreviewScale(prev => Math.min(prev + 0.1, 2)); 
   };
 
   const zoomOut = () => {
-    setPreviewScale(prev => Math.max(prev - 0.1, 0.5)); // Min zoom 50%
+    setPreviewScale(prev => Math.max(prev - 0.1, 0.5));
   };
 
   const resetZoom = () => {
@@ -1096,6 +1089,8 @@ const ResumeBuilder = () => {
           </div>
         </div>
       </div>
+      
+     
     </div>
   );
 };

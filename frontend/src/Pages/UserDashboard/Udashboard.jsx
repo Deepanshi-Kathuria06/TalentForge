@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './UserDashboard.css';
 import Settings from "../UserDashboard/Sections/Settings";
+import Projects from "../UserDashboard/Sections/Projects";
 
 const CandidateDashboard = ({ user, onLogout }) => {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
@@ -387,6 +388,7 @@ const CandidateDashboard = ({ user, onLogout }) => {
         ref={sidebarRef}
         className={`sidebar ${sidebarExpanded ? "expanded" : "collapsed"}`}
       >
+
         {/* Toggle Button */}
         <button
           className="sidebar-toggle"
@@ -408,13 +410,13 @@ const CandidateDashboard = ({ user, onLogout }) => {
           {[
             { icon: "fa-tachometer-alt", text: "Dashboard", page: "dashboard" },
             { icon: "fa-user", text: "Profile", page: "profile" },
-            { icon: "fa-file-alt", text: "Resume Tools", page: "resume", sub: ["Builder", "ATS Checker"] },
+            { icon: "fa-file-alt", text: "Resume Tools", page: "resume" },
             { icon: "fa-briefcase", text: "Jobs & Internships", page: "jobs" },
             { icon: "fa-building", text: "Companies", page: "companies" },
-            { icon: "fa-users", text: "Networking", page: "network", sub: ["Connections", "Feed", "Messages"] },
-            { icon: "fa-laptop-code", text: "Challenges", page: "challenges", sub: ["Daily Coding", "Skill Tests"] },
-            { icon: "fa-trophy", text: "Gamification", page: "gamification", sub: ["Badges", "Leaderboard", "Rewards"] },
-            { icon: "fa-book", text: "Learning", page: "learning", sub: ["Courses", "Interview Prep", "Resources"] },
+            { icon: "fa-users", text: "Networking", page: "network" },
+            { icon: "fa-laptop-code", text: "Challenges", page: "challenges" },
+            { icon: "fa-trophy", text: "Gamification", page: "gamification" },
+            { icon: "fa-book", text: "Projects", page: "projects" },
             { icon: "fa-bell", text: "Notifications", page: "notifications" },
             { icon: "fa-cog", text: "Settings", page: "settings" },
           ].map((item, index) => (
@@ -429,20 +431,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
                 {sidebarExpanded && <span className="menu-text">{item.text}</span>}
               </div>
 
-              {/* Sub-menu */}
-              {sidebarExpanded && item.sub && (
-                <div className="submenu">
-                  {item.sub.map((subItem, idx) => (
-                    <div
-                      key={idx}
-                      className="submenu-item"
-                      onClick={() => console.log(`${item.text} -> ${subItem}`)}
-                    >
-                      {subItem}
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           ))}
         </div>
@@ -523,34 +511,7 @@ const CandidateDashboard = ({ user, onLogout }) => {
       case 'projects':
         return (
           <div className="page-content">
-            <div className="page-header">
-              <h2>Projects</h2>
-              <p>Showcase your work and portfolio projects</p>
-            </div>
-            <div className="projects-grid">
-              <div className="project-card-large">
-                <div className="project-image">
-                  <i className="fas fa-laptop-code"></i>
-                </div>
-                <div className="project-details">
-                  <h4>E-commerce Platform</h4>
-                  <p>React, Node.js, MongoDB</p>
-                  <p>Full-featured online shopping platform with user authentication, product catalog, and payment processing</p>
-                  <div className="project-status completed">Completed</div>
-                </div>
-              </div>
-              <div className="project-card-large">
-                <div className="project-image">
-                  <i className="fas fa-mobile-alt"></i>
-                </div>
-                <div className="project-details">
-                  <h4>Fitness Tracking App</h4>
-                  <p>React Native, Firebase</p>
-                  <p>Mobile application for tracking workouts, nutrition, and health metrics</p>
-                  <div className="project-status in-progress">In Progress</div>
-                </div>
-              </div>
-            </div>
+            <Projects />
           </div>
         );
       case 'apps':
@@ -872,7 +833,7 @@ const CandidateDashboard = ({ user, onLogout }) => {
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
       
       {/* Main Content */}
-      <div className="main-content">
+      <div className={`main-content ${sidebarExpanded ? "expanded" : ""}`}>
         {/* Top Bar */}
         <div className="top-bar">
           <div className="search-bar">

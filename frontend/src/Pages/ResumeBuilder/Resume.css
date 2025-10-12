@@ -44,6 +44,7 @@ body {
   background-color: var(--background);
 }
 
+
 .resume-builder-container {
   display: flex;
   flex-direction: column;
@@ -1039,4 +1040,5 @@ body {
   @page {
     margin: 0;
   }
+  
 }

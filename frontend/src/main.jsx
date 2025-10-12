@@ -14,6 +14,7 @@ import CompanyDashboard from "./Pages/CompanyDashboard/CompanyDashboard.jsx";
 import Udashboard from "./Pages/UserDashboard/Udashboard";
 import Dashboard from "./Pages/UserDashboard/Dashboard";
 import SavedDesign from "./Pages/ResumeBuilder/saveddesign";
+import Projects  from './Pages/UserDashboard/Sections/Projects.jsx'
 
 import { AuthProvider } from '../src/Pages/Auth/AuthContext';
 
@@ -36,6 +37,7 @@ function MainApp() {
         <Route path="/Dashboard" element={<Dashboard />} />
         <Route path="/resume-builder/saveddesign" element={<SavedDesign />} />
         <Route path="/ResumeBuilder/resumeEditor" element={<Resume />} />
+        <Route path="/projects" element={<Projects />} />  {/* ✅ Fixed */}
       </Routes>
 
     </BrowserRouter>
