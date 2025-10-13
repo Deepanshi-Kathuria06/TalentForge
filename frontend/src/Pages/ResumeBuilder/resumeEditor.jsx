@@ -16,8 +16,9 @@ const ResumeBuilder = () => {
   const location = useLocation();
   
   const [selectedTemplate, setSelectedTemplate] = useState(
-    location.state?.templateType || 'professional'
+    location.state?.templateType || 'classic'
   );
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [activeTab, setActiveTab] = useState('personal');
   const [previewScale, setPreviewScale] = useState(1);
@@ -527,7 +528,14 @@ const ResumeBuilder = () => {
       )}
       
       <div className="content1">
-        <div className="sidebar-container1">
+        <div className={`sidebar-container1 ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+          <button 
+            className="sidebar-collapse-toggle" 
+            onClick={() => setIsSidebarCollapsed(prev => !prev)}
+            title={isSidebarCollapsed ? 'Expand' : 'Collapse'}
+          >
+            {isSidebarCollapsed ? '→' : '←'}
+          </button>
           <div className="tab-navigation1">
             {tabs.map(tab => (
               <button

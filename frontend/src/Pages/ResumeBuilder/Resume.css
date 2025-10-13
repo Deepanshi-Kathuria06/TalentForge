@@ -732,6 +732,8 @@ body {
   border-radius: var(--border-radius);
   transform-origin: top center;
   transition: var(--transition-slow);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* Resume Template Styles */
@@ -853,6 +855,81 @@ body {
   line-height: 1.6;
   color: var(--text);
   font-size: 0.95rem;
+}
+
+/* Editable field behavior to ensure wrapping and multiline support */
+.editable-field {
+  display: inline;
+  white-space: pre-wrap; /* preserve user newlines while wrapping */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.editable-field.editing {
+  display: block;
+  width: 100%;
+}
+
+.editable-field.empty {
+  color: var(--text-lighter);
+}
+
+/* Inputs for inline edit states */
+input.editable-field.editing,
+textarea.editable-field.editing {
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius-sm);
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  color: inherit;
+  background-color: var(--surface);
+}
+
+/* Ensure long contact lines wrap instead of overflowing */
+.resume .contact-info,
+.resume .contact {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Sidebar collapse styles */
+.sidebar-container1.collapsed {
+  width: 60px;
+}
+
+.sidebar-container1.collapsed .tab-text,
+.sidebar-container1.collapsed .sidebar1,
+.sidebar-container1.collapsed .sidebar-footer {
+  display: none;
+}
+
+.sidebar-collapse-toggle {
+  position: absolute;
+  left: 500px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-container1.collapsed + .preview .preview-header { /* no layout shift needed */ }
+
+.sidebar-container1.collapsed ~ .preview .preview-content {
+  padding-left: 2rem;
+}
+
+/* Adjust toggle position when collapsed */
+.sidebar-container1.collapsed .sidebar-collapse-toggle {
+  left: 60px;
 }
 
 /* Template-specific styles */

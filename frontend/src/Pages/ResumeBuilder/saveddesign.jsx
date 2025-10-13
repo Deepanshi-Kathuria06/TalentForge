@@ -95,7 +95,7 @@ const SavedDesigns = () => {
           <h1>Design Resumes That Get Noticed</h1>
           <p>Create, edit, and manage professional resumes that stand out from the crowd</p>
           <button className="saved-designs-btn-hero-primary"
-            onClick={() => navigate("../ResumeBuilder/resumeEditor")}
+            onClick={() => navigate("../ResumeBuilder/resumeEditor", { state: { templateType: 'classic', templateName: 'Classic Resume' } })}
           >
             Create New Resume
           </button>
@@ -235,7 +235,7 @@ const SavedDesigns = () => {
                 </div>
                 <h3>No saved designs yet</h3>
                 <p>Create your first resume to get started</p>
-                <button className="saved-designs-btn-primary" onClick={() => navigate("../ResumeBuilder/resumeEditor")}>
+                <button className="saved-designs-btn-primary" onClick={() => navigate("../ResumeBuilder/resumeEditor", { state: { templateType: 'classic', templateName: 'Classic Resume' } })}>
                   Create Resume
                 </button>
               </div>
