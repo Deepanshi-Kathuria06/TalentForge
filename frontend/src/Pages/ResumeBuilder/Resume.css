@@ -1002,22 +1002,54 @@ textarea.editable-field.editing {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .sidebar-container {
-    height: 50vh;
+  /* Mobile layout - stack sidebar and preview vertically */
+  .content1 {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .sidebar-container1 {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  
+  .sidebar-container1.collapsed {
+    width: 100%;
+    height: auto;
   }
   
   .preview {
-    height: 50vh;
+    width: 100%;
+    height: auto;
+    min-height: 400px;
+    padding: 1rem;
+  }
+  
+  .resume {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 1.5rem;
+    transform: none;
+    box-shadow: none;
+    border: 1px solid var(--border);
   }
   
   .tab-navigation {
     padding: 0.25rem;
     gap: 0.125rem;
+    overflow-x: auto;
+    flex-wrap: nowrap;
   }
   
   .tab-button {
-    padding: 0.75rem 0.25rem;
-    min-width: 70px;
+    padding: 0.75rem 0.5rem;
+    min-width: 80px;
+    font-size: 0.8rem;
+    white-space: nowrap;
   }
   
   .tab-content-wrapper {
@@ -1026,7 +1058,7 @@ textarea.editable-field.editing {
   
   .input-row {
     flex-direction: column;
-    gap: 0;
+    gap: 1rem;
   }
   
   .skill-inputs {
@@ -1047,6 +1079,51 @@ textarea.editable-field.editing {
   
   .date-range {
     margin-top: 0.25rem;
+  }
+  
+  /* Hide sidebar collapse toggle on mobile */
+  .sidebar-collapse-toggle {
+    display: none;
+  }
+  
+  /* Mobile form improvements */
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-control {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Mobile resume preview improvements */
+  .resume-name {
+    font-size: 1.8rem;
+  }
+  
+  .resume-title {
+    font-size: 1.2rem;
+  }
+  
+  .section-title {
+    font-size: 1.1rem;
+  }
+  
+  .experience-item h3 {
+    font-size: 1rem;
+  }
+  
+  .experience-item h4 {
+    font-size: 0.9rem;
+  }
+  
+  .experience-item p {
+    font-size: 0.85rem;
   }
 }
 

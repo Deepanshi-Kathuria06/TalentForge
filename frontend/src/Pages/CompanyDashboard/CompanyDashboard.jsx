@@ -34,7 +34,7 @@ const CompanyDashboard = ({ user, onLogout }) => {
   const renderContent = () => {
     switch (activePage) {
       case 'posts':
-        return (
+  return (
           <div className="dashboard-content">
             <div className="left-column">
               <div className="card">
@@ -88,16 +88,16 @@ const CompanyDashboard = ({ user, onLogout }) => {
                     </div>
                     <div className="post-content" style={{ whiteSpace: 'pre-wrap' }}>
                       {p.content}
-                    </div>
+          </div>
                     {p.image && (
                       <div className="post-image">
                         <img src={p.image} alt="post" />
-                      </div>
+        </div>
                     )}
-                  </div>
-                ))}
-              </div>
             </div>
+          ))}
+        </div>
+      </div>
 
             <div className="right-column">
               <div className="card">
@@ -109,15 +109,15 @@ const CompanyDashboard = ({ user, onLogout }) => {
                   <div className="feed-item"><p>Team Building Activities</p></div>
                   <div className="feed-item"><p>Industry Insights</p></div>
                 </div>
-              </div>
+          </div>
               <div className="card">
                 <h3>Engagement Stats</h3>
                 <div className="engagement-stats">
-                  <div className="stat-item">
+              <div className="stat-item">
                     <span className="stat-value">1.2K</span>
                     <span className="stat-label">Total Views</span>
-                  </div>
-                  <div className="stat-item">
+              </div>
+              <div className="stat-item">
                     <span className="stat-value">247</span>
                     <span className="stat-label">Engagements</span>
                   </div>
@@ -341,115 +341,115 @@ const CompanyDashboard = ({ user, onLogout }) => {
                 <h3>Security</h3>
                 <div className="feed">
                   <div className="feed-item"><p>2FA, SSO, Role permissions</p></div>
-                </div>
               </div>
             </div>
           </div>
+        </div>
         );
       case 'overview':
       default:
         return (
-          <div className="dashboard-content">
-            <div className="left-column">
-              <div className="card highlight-card">
-                <h3>Recruitment Overview</h3>
-                <div className="stats-overview">
-                  <div className="overview-item">
-                    <span className="overview-value">42</span>
-                    <span className="overview-label">New Applicants</span>
-                  </div>
-                  <div className="overview-item">
-                    <span className="overview-value">5,289</span>
-                    <span className="overview-label">Profile Views</span>
-                  </div>
-                  <div className="overview-item">
-                    <span className="overview-value">87%</span>
-                    <span className="overview-label">Response Rate</span>
-                  </div>
+        <div className="dashboard-content">
+          <div className="left-column">
+            <div className="card highlight-card">
+              <h3>Recruitment Overview</h3>
+              <div className="stats-overview">
+                <div className="overview-item">
+                  <span className="overview-value">42</span>
+                  <span className="overview-label">New Applicants</span>
                 </div>
-              </div>
-              <div className="card">
-                <h3>Applications Trends</h3>
-                <div className="graph-placeholder">
-                  <i className="fas fa-chart-line graph-icon"></i>
-                  <p>Application trends visualization</p>
+                <div className="overview-item">
+                  <span className="overview-value">5,289</span>
+                  <span className="overview-label">Profile Views</span>
                 </div>
-              </div>
-              <div className="card">
-                <h3>Ongoing Applications</h3>
-                <div className="application-cards">
-                  <div className="application-card">
-                    <h4>Senior Frontend Developer</h4>
-                    <div className="applicant-stats">
-                      <span><strong>24</strong> Applicants</span>
-                      <span><strong>82%</strong> Avg. Match</span>
-                    </div>
-                    <div className="application-actions">
-                      <button className="primary-btn">View Applicants</button>
-                      <button className="secondary-btn">Edit Job</button>
-                    </div>
-                  </div>
-                  <div className="application-card">
-                    <h4>Product Manager</h4>
-                    <div className="applicant-stats">
-                      <span><strong>16</strong> Applicants</span>
-                      <span><strong>75%</strong> Avg. Match</span>
-                    </div>
-                    <div className="application-actions">
-                      <button className="primary-btn">View Applicants</button>
-                      <button className="secondary-btn">Edit Job</button>
-                    </div>
-                  </div>
+                <div className="overview-item">
+                  <span className="overview-value">87%</span>
+                  <span className="overview-label">Response Rate</span>
                 </div>
               </div>
             </div>
-            <div className="right-column">
-              <div className="card">
-                <h3>Team Activity</h3>
-                <div className="team-activity">
-                  <div className="activity-item">
-                    <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Team Member" />
-                    <div className="activity-info">
-                      <h4>Sarah Johnson</h4>
-                      <p>Reviewing resumes for Frontend position</p>
-                      <span className="activity-time">Active now</span>
-                    </div>
+            <div className="card">
+              <h3>Applications Trends</h3>
+              <div className="graph-placeholder">
+                <i className="fas fa-chart-line graph-icon"></i>
+                <p>Application trends visualization</p>
+              </div>
+            </div>
+            <div className="card">
+              <h3>Ongoing Applications</h3>
+              <div className="application-cards">
+                <div className="application-card">
+                  <h4>Senior Frontend Developer</h4>
+                  <div className="applicant-stats">
+                    <span><strong>24</strong> Applicants</span>
+                    <span><strong>82%</strong> Avg. Match</span>
                   </div>
-                  <div className="activity-item">
-                    <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Team Member" />
-                    <div className="activity-info">
-                      <h4>David Wilson</h4>
-                      <p>Scheduled interviews with 3 candidates</p>
-                      <span className="activity-time">1 hour ago</span>
-                    </div>
+                  <div className="application-actions">
+                    <button className="primary-btn">View Applicants</button>
+                    <button className="secondary-btn">Edit Job</button>
                   </div>
                 </div>
-              </div>
-              <div className="card">
-                <h3>Suggested Candidates</h3>
-                <div className="suggestions">
-                  <div className="suggestion-item">
-                    <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="Candidate" />
-                    <div className="suggestion-info">
-                      <h4>Jessica Williams</h4>
-                      <p>Frontend Developer</p>
-                      <div className="match-score">92% Match</div>
-                    </div>
-                    <button className="action-btn"><i className="fas fa-eye"></i></button>
+                <div className="application-card">
+                    <h4>Product Manager</h4>
+                  <div className="applicant-stats">
+                      <span><strong>16</strong> Applicants</span>
+                      <span><strong>75%</strong> Avg. Match</span>
                   </div>
-                  <div className="suggestion-item">
-                    <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Candidate" />
-                    <div className="suggestion-info">
-                      <h4>Michael Chen</h4>
-                      <p>Full Stack Developer</p>
-                      <div className="match-score">88% Match</div>
-                    </div>
-                    <button className="action-btn"><i className="fas fa-eye"></i></button>
+                  <div className="application-actions">
+                    <button className="primary-btn">View Applicants</button>
+                    <button className="secondary-btn">Edit Job</button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <div className="right-column">
+            <div className="card">
+              <h3>Team Activity</h3>
+              <div className="team-activity">
+                <div className="activity-item">
+                  <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Team Member" />
+                  <div className="activity-info">
+                    <h4>Sarah Johnson</h4>
+                    <p>Reviewing resumes for Frontend position</p>
+                    <span className="activity-time">Active now</span>
+                  </div>
+                </div>
+                <div className="activity-item">
+                    <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Team Member" />
+                  <div className="activity-info">
+                      <h4>David Wilson</h4>
+                      <p>Scheduled interviews with 3 candidates</p>
+                    <span className="activity-time">1 hour ago</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="card">
+              <h3>Suggested Candidates</h3>
+              <div className="suggestions">
+                <div className="suggestion-item">
+                  <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="Candidate" />
+                  <div className="suggestion-info">
+                    <h4>Jessica Williams</h4>
+                    <p>Frontend Developer</p>
+                    <div className="match-score">92% Match</div>
+                  </div>
+                  <button className="action-btn"><i className="fas fa-eye"></i></button>
+                </div>
+                <div className="suggestion-item">
+                    <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Candidate" />
+                  <div className="suggestion-info">
+                      <h4>Michael Chen</h4>
+                      <p>Full Stack Developer</p>
+                    <div className="match-score">88% Match</div>
+                  </div>
+                  <button className="action-btn"><i className="fas fa-eye"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         );
     }
   };

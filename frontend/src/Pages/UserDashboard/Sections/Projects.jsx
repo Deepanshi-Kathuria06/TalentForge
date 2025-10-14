@@ -38,6 +38,18 @@ function Projects() {
       status: "completed",
       dateCreated: "2023-12-10",
       featured: true
+    },
+    {
+      id: 4,
+      title: "Portfolio Website",
+      description: "A modern, responsive portfolio website showcasing projects and skills with smooth animations and dark mode support.",
+      techStack: ["Next.js", "Framer Motion", "Styled Components", "Vercel"],
+      liveLink: "https://portfolio-demo.vercel.app",
+      githubLink: "https://github.com/user/portfolio",
+      coverImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop",
+      status: "completed",
+      dateCreated: "2024-01-20",
+      featured: false
     }
   ]);
 
@@ -46,6 +58,7 @@ function Projects() {
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const [isLoading, setIsLoading] = useState(true);
   const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -58,8 +71,18 @@ function Projects() {
     status: "in-progress"
   });
 
+  // Simulate loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Animation effects
   useEffect(() => {
+    if (isLoading) return;
+
     const cards = document.querySelectorAll('.project-card');
     const observer = new IntersectionObserver(
       (entries) => {
@@ -68,16 +91,19 @@ function Projects() {
             setTimeout(() => {
               entry.target.style.opacity = '1';
               entry.target.style.transform = 'translateY(0)';
-            }, index * 100);
+            }, index * 150);
           }
         });
       },
-      { threshold: 0.1 }
+      { 
+        threshold: 0.1,
+        rootMargin: '50px'
+      }
     );
 
     cards.forEach(card => observer.observe(card));
     return () => observer.disconnect();
-  }, [projects]);
+  }, [projects, isLoading]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -103,33 +129,39 @@ function Projects() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newProject = {
-      id: editingProject ? editingProject.id : Date.now(),
-      ...formData,
-      techStack: formData.techStack.split(',').map(tech => tech.trim()).filter(tech => tech),
-      dateCreated: editingProject ? editingProject.dateCreated : new Date().toISOString().split('T')[0],
-      featured: false
-    };
+    setIsLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      const newProject = {
+        id: editingProject ? editingProject.id : Date.now(),
+        ...formData,
+        techStack: formData.techStack.split(',').map(tech => tech.trim()).filter(tech => tech),
+        dateCreated: editingProject ? editingProject.dateCreated : new Date().toISOString().split('T')[0],
+        featured: editingProject ? editingProject.featured : false
+      };
 
-    if (editingProject) {
-      setProjects(prev => prev.map(project => 
-        project.id === editingProject.id ? newProject : project
-      ));
-    } else {
-      setProjects(prev => [newProject, ...prev]);
-    }
+      if (editingProject) {
+        setProjects(prev => prev.map(project => 
+          project.id === editingProject.id ? newProject : project
+        ));
+      } else {
+        setProjects(prev => [newProject, ...prev]);
+      }
 
-    setFormData({
-      title: "",
-      description: "",
-      techStack: "",
-      liveLink: "",
-      githubLink: "",
-      coverImage: "",
-      status: "in-progress"
-    });
-    setShowCreateForm(false);
-    setEditingProject(null);
+      setFormData({
+        title: "",
+        description: "",
+        techStack: "",
+        liveLink: "",
+        githubLink: "",
+        coverImage: "",
+        status: "in-progress"
+      });
+      setShowCreateForm(false);
+      setEditingProject(null);
+      setIsLoading(false);
+    }, 500);
   };
 
   const handleEdit = (project) => {
@@ -147,7 +179,13 @@ function Projects() {
   };
 
   const handleDelete = (projectId) => {
-    setProjects(prev => prev.filter(project => project.id !== projectId));
+    if (window.confirm('Are you sure you want to delete this project?')) {
+      setIsLoading(true);
+      setTimeout(() => {
+        setProjects(prev => prev.filter(project => project.id !== projectId));
+        setIsLoading(false);
+      }, 300);
+    }
   };
 
   const toggleFeatured = (projectId) => {
@@ -174,16 +212,28 @@ function Projects() {
       return 0;
     });
 
-  const ProjectCard = ({ project }) => (
-    <div className="project-card" key={project.id} style={{ animationDelay: `${projects.indexOf(project) * 0.1}s` }}>
+  const ProjectCard = ({ project, index }) => (
+    <div 
+      className="project-card" 
+      key={project.id}
+      style={{ 
+        animationDelay: `${index * 0.1}s`,
+        animationDuration: '0.6s'
+      }}
+    >
       <div className="project-cover">
-        <img src={project.coverImage} alt={project.title} />
+        <img 
+          src={project.coverImage} 
+          alt={project.title}
+          loading="lazy"
+        />
         <div className="project-overlay">
           <div className="project-actions">
             <button 
               className="action-btn edit-btn"
               onClick={() => handleEdit(project)}
               title="Edit Project"
+              aria-label={`Edit ${project.title}`}
             >
               <i className="fas fa-edit"></i>
             </button>
@@ -191,6 +241,7 @@ function Projects() {
               className="action-btn delete-btn"
               onClick={() => handleDelete(project.id)}
               title="Delete Project"
+              aria-label={`Delete ${project.title}`}
             >
               <i className="fas fa-trash"></i>
             </button>
@@ -198,6 +249,7 @@ function Projects() {
               className={`action-btn star-btn ${project.featured ? 'featured' : ''}`}
               onClick={() => toggleFeatured(project.id)}
               title={project.featured ? "Remove from Featured" : "Add to Featured"}
+              aria-label={project.featured ? `Remove ${project.title} from featured` : `Add ${project.title} to featured`}
             >
               <i className="fas fa-star"></i>
             </button>
@@ -216,9 +268,12 @@ function Projects() {
         <p className="project-description">{project.description}</p>
         
         <div className="tech-stack">
-          {project.techStack.map((tech, index) => (
-            <span key={index} className="tech-tag">{tech}</span>
+          {project.techStack.slice(0, 4).map((tech, techIndex) => (
+            <span key={techIndex} className="tech-tag">{tech}</span>
           ))}
+          {project.techStack.length > 4 && (
+            <span className="tech-tag">+{project.techStack.length - 4}</span>
+          )}
         </div>
         
         <div className="project-links">
@@ -227,6 +282,7 @@ function Projects() {
             target="_blank" 
             rel="noopener noreferrer"
             className="link-btn live-link"
+            aria-label={`View live demo of ${project.title}`}
           >
             <i className="fas fa-external-link-alt"></i>
             Live Demo
@@ -236,6 +292,7 @@ function Projects() {
             target="_blank" 
             rel="noopener noreferrer"
             className="link-btn github-link"
+            aria-label={`View source code of ${project.title} on GitHub`}
           >
             <i className="fab fa-github"></i>
             GitHub
@@ -245,7 +302,11 @@ function Projects() {
         <div className="project-meta">
           <span className="project-date">
             <i className="fas fa-calendar"></i>
-            {new Date(project.dateCreated).toLocaleDateString()}
+            {new Date(project.dateCreated).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+            })}
           </span>
         </div>
       </div>
@@ -256,21 +317,24 @@ function Projects() {
     <div className="projects-page">
       <div className="projects-header">
         <div className="header-content">
-          <h1 className="page-title">
-            <i className="fas fa-laptop-code"></i>
-            My Projects
-          </h1>
-          <p className="page-subtitle">
-            Showcase your work and demonstrate your skills to potential employers
-          </p>
+          <div>
+            <h1 className="page-title">
+              <i className="fas fa-laptop-code"></i>
+              My Projects
+            </h1>
+            <p className="page-subtitle">
+              Showcase your work and demonstrate your skills to potential employers with beautiful project presentations
+            </p>
+          </div>
+          <button 
+            className="create-project-btn"
+            onClick={() => setShowCreateForm(true)}
+            aria-label="Create new project"
+          >
+            <i className="fas fa-plus"></i>
+            Add New Project
+          </button>
         </div>
-        <button 
-          className="create-project-btn"
-          onClick={() => setShowCreateForm(true)}
-        >
-          <i className="fas fa-plus"></i>
-          Add New Project
-        </button>
       </div>
 
       <div className="projects-controls">
@@ -282,14 +346,20 @@ function Projects() {
               placeholder="Search projects, technologies..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              aria-label="Search projects"
             />
           </div>
         </div>
         
         <div className="filter-section">
           <div className="filter-group">
-            <label>Filter:</label>
-            <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+            <label htmlFor="filter-select">Filter:</label>
+            <select 
+              id="filter-select"
+              value={filter} 
+              onChange={(e) => setFilter(e.target.value)}
+              aria-label="Filter projects"
+            >
               <option value="all">All Projects</option>
               <option value="featured">Featured</option>
               <option value="completed">Completed</option>
@@ -298,8 +368,13 @@ function Projects() {
           </div>
           
           <div className="filter-group">
-            <label>Sort by:</label>
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <label htmlFor="sort-select">Sort by:</label>
+            <select 
+              id="sort-select"
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)}
+              aria-label="Sort projects"
+            >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
               <option value="title">Title A-Z</option>
@@ -309,12 +384,31 @@ function Projects() {
       </div>
 
       <div className="projects-grid">
-        {filteredProjects.map(project => (
-          <ProjectCard project={project} />
-        ))}
+        {isLoading ? (
+          // Loading skeletons
+          Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="project-card loading">
+              <div className="project-cover" style={{ backgroundColor: 'var(--gray-light)' }}></div>
+              <div className="project-content">
+                <div style={{ backgroundColor: 'var(--gray-light)', height: '24px', borderRadius: '4px', marginBottom: '12px' }}></div>
+                <div style={{ backgroundColor: 'var(--gray-light)', height: '16px', borderRadius: '4px', marginBottom: '8px' }}></div>
+                <div style={{ backgroundColor: 'var(--gray-light)', height: '16px', borderRadius: '4px', width: '80%', marginBottom: '20px' }}></div>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} style={{ backgroundColor: 'var(--gray-light)', height: '28px', borderRadius: '20px', flex: 1 }}></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          filteredProjects.map((project, index) => (
+            <ProjectCard project={project} index={index} key={project.id} />
+          ))
+        )}
       </div>
 
-      {filteredProjects.length === 0 && (
+      {!isLoading && filteredProjects.length === 0 && (
         <div className="empty-state">
           <i className="fas fa-folder-open"></i>
           <h3>No projects found</h3>
@@ -322,6 +416,7 @@ function Projects() {
           <button 
             className="create-first-btn"
             onClick={() => setShowCreateForm(true)}
+            aria-label="Create your first project"
           >
             Create Your First Project
           </button>
@@ -339,6 +434,7 @@ function Projects() {
                   setShowCreateForm(false);
                   setEditingProject(null);
                 }}
+                aria-label="Close modal"
               >
                 <i className="fas fa-times"></i>
               </button>
@@ -355,6 +451,7 @@ function Projects() {
                   onChange={handleInputChange}
                   placeholder="Enter project title"
                   required
+                  aria-required="true"
                 />
               </div>
 
@@ -368,6 +465,7 @@ function Projects() {
                   placeholder="Describe your project, its features, and what you learned"
                   rows="4"
                   required
+                  aria-required="true"
                 />
               </div>
 
@@ -380,7 +478,11 @@ function Projects() {
                   value={formData.techStack}
                   onChange={handleInputChange}
                   placeholder="React, Node.js, MongoDB (comma separated)"
+                  aria-describedby="techStackHelp"
                 />
+                <small id="techStackHelp" style={{ color: 'var(--text-light)', fontSize: '0.85rem', marginTop: '4px', display: 'block' }}>
+                  Separate technologies with commas
+                </small>
               </div>
 
               <div className="form-row">
@@ -432,11 +534,13 @@ function Projects() {
                     onChange={handleImageUpload}
                     accept="image/*"
                     style={{ display: 'none' }}
+                    aria-describedby="imageUploadHelp"
                   />
                   <button
                     type="button"
                     className="upload-btn"
                     onClick={() => fileInputRef.current?.click()}
+                    aria-label="Choose cover image"
                   >
                     <i className="fas fa-upload"></i>
                     Choose Cover Image
@@ -448,11 +552,15 @@ function Projects() {
                         type="button"
                         className="remove-image"
                         onClick={() => setFormData(prev => ({ ...prev, coverImage: "" }))}
+                        aria-label="Remove image"
                       >
                         <i className="fas fa-times"></i>
                       </button>
                     </div>
                   )}
+                  <small id="imageUploadHelp" style={{ color: 'var(--text-light)', fontSize: '0.85rem' }}>
+                    Recommended: 800x400px landscape image
+                  </small>
                 </div>
               </div>
 
@@ -479,4 +587,4 @@ function Projects() {
   );
 }
 
-export default Projects; 
+export default Projects;
