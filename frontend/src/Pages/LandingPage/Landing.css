@@ -1,18 +1,3 @@
-/* Base Styles */
-:root {
-  --primary: #004030;
-  --primary-dark: #003020;
-  --secondary: #4A9782;
-  --accent: #DCD0A8;
-  --background: #FFF9E5;
-  --text: #2D3748;
-  --text-light: #718096;
-  --white: #FFFFFF;
-  --gray-light: #F7FAFC;
-  --border-radius: 12px;
-  --box-shadow: 0 10px 25px rgba(0, 64, 48, 0.1);
-  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
 html,body{
   overflow-x: hidden;
 }

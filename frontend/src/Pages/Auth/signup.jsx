@@ -29,17 +29,17 @@ const SignupPage = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    const userData = {
-      userType,
-      ...formData,
-      joinedDate: new Date().toISOString()
-    };
+ // In your Signup component - update the handleSubmit function
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  const userData = {
+    userType,
+    ...formData,
+    joinedDate: new Date().toISOString()
+  };
 
-    try {
-    // ✅ Call your backend API (MongoDB)
+  try {
     const res = await fetch("http://localhost:5000/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -50,6 +50,12 @@ const SignupPage = () => {
     console.log("Signup response:", result);
 
     if (result.user) {
+      // Ensure user data is properly set
+      if (!result.user.name) {
+        // Fallback to form data if name not in response
+        result.user.name = formData.name;
+      }
+      
       // Save session
       login(result.user);
 
@@ -61,42 +67,18 @@ const SignupPage = () => {
     }
   } catch (err) {
     console.error("❌ Backend signup error:", err);
-  }
-
-    try {
-      const res = await fetch("https://talentforge.app.n8n.cloud/webhook-test/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
-
-      const result = await res.json();
-      console.log("Signup response:", result);
-
-      if (result.user) {
-        login(result.user);
-        if (userType === "student") navigate("/UDashboard");
-        else navigate("/CompanyDashboard");
-        return;
-      }
-    } catch (err) {
-      console.error("Signup error:", err);
-    }
-
+    // Fallback to localStorage if backend fails
     const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
     localStorage.setItem('users', JSON.stringify([...existingUsers, userData]));
-    
     login(userData);
-    
-    console.log('Signup successful:', userData);
     
     if (userType === 'student') {
       navigate('/UDashboard');
     } else if (userType === 'company') {
       navigate('/CompanyDashboard');
     }
-  };
-
+  }
+};
   // Custom SVG Icons
   const StudentIcon = () => (
     <svg className="signup-tab-icon" viewBox="0 0 24 24">
