@@ -11,45 +11,40 @@ import ATS from "./Pages/ATS CHECKER/ATS";
 import Resume from "./Pages/ResumeBuilder/resumeEditor";
 import Starting from "./Pages/ResumeBuilder/starting";
 import CompanyDashboard from "./Pages/CompanyDashboard/CompanyDashboard.jsx";
-import Udashboard from "./Pages/UserDashboard/Udashboard";
+import Udashboard from "./Pages/UserDashboard/Udashboard.jsx"
 import Dashboard from "./Pages/UserDashboard/Dashboard";
 import SavedDesign from "./Pages/ResumeBuilder/saveddesign";
-import Projects  from './Pages/UserDashboard/Sections/Projects.jsx'
+import Projects from './Pages/UserDashboard/Sections/Projects.jsx'
 
-import { AuthProvider } from '../src/Pages/Auth/AuthContext';
+import { AuthProvider } from './Pages/Auth/AuthContext'; // Fixed path
 
-
-
-// Wrap all routes in a function component
-
-function MainApp() {
+// Create App component that uses AuthProvider
+function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/ATS" element={<ATS />} />
-        <Route path="/starting" element={<Starting />} />
-
-        <Route path="/CompanyDashboard" element={<CompanyDashboard />} />
-        <Route path="/Udashboard" element={<Udashboard />} />
-        <Route path="/Dashboard" element={<Dashboard />} />
-        <Route path="/resume-builder/saveddesign" element={<SavedDesign />} />
-        <Route path="/ResumeBuilder/resumeEditor" element={<Resume />} />
-        <Route path="/projects" element={<Projects />} />  {/* ✅ Fixed */}
-      </Routes>
-
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/ATS" element={<ATS />} />
+          <Route path="/starting" element={<Starting />} />
+          <Route path="/CompanyDashboard" element={<CompanyDashboard />} />
+          <Route path="/UDashboard" element={<Udashboard />} /> {/* Fixed: UDashboard not Udashboard */}
+          <Route path="/Dashboard" element={<Dashboard />} />
+          <Route path="/resume-builder/saveddesign" element={<SavedDesign />} />
+          <Route path="/ResumeBuilder/resumeEditor" element={<Resume />} />
+          <Route path="/projects" element={<Projects />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
-      <AuthProvider> {/* Wrap everything with AuthProvider */}
-        <MainApp />
-      </AuthProvider>
+      <App />
     </GoogleOAuthProvider>
   </StrictMode>
 );

@@ -35,46 +35,86 @@ router.post("/signup", async (req, res) => {
     // ✅ Send to n8n webhook
     await sendToN8N(newUser);
 
+    // ✅ RETURN COMPLETE USER DATA (FIXED)
+    const userResponse = {
+      _id: newUser._id,
+      id: newUser._id, // Include both _id and id for compatibility
+      name: newUser.name,
+      email: newUser.email,
+      userType: newUser.userType,
+      // Include user-type specific fields
+      ...(newUser.userType === 'student' && {
+        university: newUser.university,
+        major: newUser.major,
+        graduationYear: newUser.graduationYear
+      }),
+      ...(newUser.userType === 'company' && {
+        industry: newUser.industry,
+        companySize: newUser.companySize,
+        website: newUser.website
+      }),
+      joinedDate: newUser.joinedDate
+    };
+
     res.status(201).json({
       message: "Signup successful",
-      user: {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-        userType: newUser.userType,
-      },
+      user: userResponse, // ✅ Now returns complete user data
+      success: true // ✅ Add success flag for consistency
     });
   } catch (err) {
     console.error("❌ Signup error:", err);
     res.status(500).json({ error: "Signup failed: " + err.message });
   }
 });
-// ✅ Login Route
+
+// ✅ Login Route - FIXED
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log("🔐 Login attempt for:", email);
+
     // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
+      console.log("❌ User not found:", email);
       return res.status(404).json({ error: "User not found" });
     }
 
     // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      console.log("❌ Invalid password for:", email);
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // Return user info (never send password)
+    console.log("✅ Login successful for:", user.name);
+
+    // ✅ RETURN COMPLETE USER DATA (FIXED)
+    const userResponse = {
+      _id: user._id,
+      id: user._id, // Include both _id and id for compatibility
+      name: user.name,
+      email: user.email,
+      userType: user.userType,
+      // Include user-type specific fields
+      ...(user.userType === 'student' && {
+        university: user.university,
+        major: user.major,
+        graduationYear: user.graduationYear
+      }),
+      ...(user.userType === 'company' && {
+        industry: user.industry,
+        companySize: user.companySize,
+        website: user.website
+      }),
+      joinedDate: user.joinedDate
+    };
+
     res.status(200).json({
       message: "Login successful",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        userType: user.userType,
-      },
+      user: userResponse, // ✅ Now returns complete user data
+      success: true // ✅ Add success flag for consistency
     });
 
   } catch (err) {
@@ -82,6 +122,5 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ error: "Login failed: " + err.message });
   }
 });
-
 
 export default router;

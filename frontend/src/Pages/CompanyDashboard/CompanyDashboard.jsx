@@ -1,14 +1,57 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useAuth } from '../Auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import "../CompanyDashboard/Dashboard.css";
 
-const CompanyDashboard = ({ user, onLogout }) => {
+const CompanyDashboard = () => {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [activePage, setActivePage] = useState('dashboard');
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  // ✅ STRICT USER TYPE VALIDATION
+  useEffect(() => {
+    console.log("🏢 CompanyDashboard - Current User:", user);
+    
+    if (user && user.userType !== 'company') {
+      console.log('🚫 Access denied: User is not a company');
+      navigate('/UDashboard');
+      return;
+    }
+  }, [user, navigate]);
+
+  // ✅ Show loading or access denied if wrong user type
+  if (!user) {
+    return <div className="loading-container">Loading...</div>;
+  }
+
+  if (user.userType !== 'company') {
+    return (
+      <div style={{ padding: '50px', textAlign: 'center' }}>
+        <h2>Access Restricted</h2>
+        <p>Company dashboard is only available for company accounts.</p>
+        <button onClick={() => navigate('/UDashboard')}>
+          Go to Student Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  // ✅ HELPER FUNCTION TO GET USER ROLE
+  const getUserRole = () => {
+    return 'Hiring Manager';
+  };
+
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';
+  };
+
   const [posts, setPosts] = useState([
     {
       id: 1,
       authorName: user?.name || 'TalentForge',
-      authorRole: user?.userType === 'company' ? 'Hiring Manager' : 'Recruiter',
+      authorRole: getUserRole(),
       authorAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
       time: '2h',
       content: "We just opened new roles for Frontend and Backend Engineers. If you're passionate about building at scale, we'd love to hear from you! 🚀",
@@ -88,7 +131,7 @@ const CompanyDashboard = ({ user, onLogout }) => {
           <div className="page-content">
             <div className="page-header">
               <h2>Company Posts</h2>
-              <p>Welcome back, {user?.name}! Share updates and engage with potential candidates</p>
+              <p>Welcome back, {user?.name || 'Company'}! Share updates and engage with potential candidates</p>
             </div>
             
             <div className="content-grid">
@@ -107,7 +150,7 @@ const CompanyDashboard = ({ user, onLogout }) => {
                       />
                       <div>
                         <div className="composer-name">{user?.name || 'Your Company'}</div>
-                        <div className="composer-role">{user?.userType === 'company' ? 'Hiring Manager' : 'Recruiter'}</div>
+                        <div className="composer-role">{getUserRole()}</div>
                       </div>
                     </div>
                     
@@ -154,7 +197,7 @@ const CompanyDashboard = ({ user, onLogout }) => {
                           const newPost = {
                             id: Date.now(),
                             authorName: user?.name || 'TalentForge',
-                            authorRole: user?.userType === 'company' ? 'Hiring Manager' : 'Recruiter',
+                            authorRole: getUserRole(),
                             authorAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
                             time: 'Just now',
                             content: composer.title ? `**${composer.title}**\n\n${composer.body}` : composer.body,
@@ -556,7 +599,7 @@ const CompanyDashboard = ({ user, onLogout }) => {
           <div className="page-content">
             <div className="page-header">
               <h2>Recruitment Overview</h2>
-              <p>Welcome back, {user?.name}! Here's your recruitment summary.</p>
+              <p>Welcome back, {user?.name || 'Company'}! Here's your recruitment summary.</p>
             </div>
             
             <div className="stats-grid">
@@ -708,7 +751,7 @@ const CompanyDashboard = ({ user, onLogout }) => {
           <div className="page-content">
             <div className="page-header">
               <h2>Company Dashboard</h2>
-              <p>Welcome back, {user?.name}! Here's your recruitment overview.</p>
+              <p>Welcome back, {user?.name || 'Company'}! Here's your recruitment overview.</p>
             </div>
             
             <div className="stats-grid">
@@ -907,7 +950,7 @@ const CompanyDashboard = ({ user, onLogout }) => {
     }
   };
 
-  return (
+   return (
     <div className="company-dashboard">
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
       
@@ -930,22 +973,22 @@ const CompanyDashboard = ({ user, onLogout }) => {
               </div>
             </div>
             
-            <div className="profile">
+         <div className="profile">
               <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="Profile" className="profile-img" />
               <div className="profile-info">
-                <span className="profile-name">{user?.name || 'User'}</span>
+                <span className="profile-name">{user?.name || 'Company'}</span>
                 <span className="profile-role">
-                  {user?.userType === 'company' ? 'Hiring Manager' : 'Recruiter'}
+                  {getUserRole()}
                 </span>
               </div>
-              <button className="logout-btn" onClick={onLogout}>
+              <button className="logout-btn" onClick={handleLogout}>
                 <i className="fas fa-sign-out-alt"></i>
               </button>
             </div>
           </div>
         </div>
 
-        <div className="dashboard-content">
+ <div className="dashboard-content">
           {renderContent()}
         </div>
       </div>

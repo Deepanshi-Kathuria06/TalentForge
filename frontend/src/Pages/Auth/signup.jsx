@@ -29,15 +29,28 @@ const SignupPage = () => {
     }));
   };
 
- // In your Signup component - update the handleSubmit function
+// Updated Signup.jsx - handleSubmit function
 const handleSubmit = async (e) => {
   e.preventDefault();
   
   const userData = {
     userType,
-    ...formData,
+    name: formData.name, // Make sure this is included
+    email: formData.email,
+    password: formData.password,
+    ...(userType === 'student' ? {
+      university: formData.university,
+      major: formData.major,
+      graduationYear: formData.graduationYear
+    } : {
+      industry: formData.industry,
+      companySize: formData.companySize,
+      website: formData.website
+    }),
     joinedDate: new Date().toISOString()
   };
+
+  console.log("📤 Sending signup data:", userData);
 
   try {
     const res = await fetch("http://localhost:5000/api/signup", {
@@ -47,36 +60,36 @@ const handleSubmit = async (e) => {
     });
 
     const result = await res.json();
-    console.log("Signup response:", result);
+    console.log("🔐 Signup API Response:", result);
 
     if (result.user) {
-      // Ensure user data is properly set
-      if (!result.user.name) {
-        // Fallback to form data if name not in response
-        result.user.name = formData.name;
-      }
+      console.log("✅ User data from signup:", result.user);
+      
+      // Ensure all required fields are present
+      const completeUser = {
+        ...result.user,
+        name: result.user.name || formData.name, // Fallback to form data
+        userType: result.user.userType || userType
+      };
+      
+      console.log("✅ Complete user data for context:", completeUser);
       
       // Save session
-      login(result.user);
+      login(completeUser);
 
-      // Redirect based on type
-      if (userType === "student") navigate("/UDashboard");
-      else navigate("/CompanyDashboard");
+      // Redirect with small delay
+      setTimeout(() => {
+        if (userType === "student") navigate("/UDashboard");
+        else navigate("/CompanyDashboard");
+      }, 100);
 
-      return;
+    } else {
+      console.error("❌ Signup failed:", result.error);
+      alert(result.error || "Signup failed - please try again");
     }
   } catch (err) {
-    console.error("❌ Backend signup error:", err);
-    // Fallback to localStorage if backend fails
-    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    localStorage.setItem('users', JSON.stringify([...existingUsers, userData]));
-    login(userData);
-    
-    if (userType === 'student') {
-      navigate('/UDashboard');
-    } else if (userType === 'company') {
-      navigate('/CompanyDashboard');
-    }
+    console.error("❌ Signup network error:", err);
+    alert("Signup failed - please check your connection");
   }
 };
   // Custom SVG Icons

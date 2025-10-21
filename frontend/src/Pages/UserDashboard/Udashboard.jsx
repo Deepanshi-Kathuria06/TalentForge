@@ -1,10 +1,11 @@
-
 import React, { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../Auth/AuthContext';
+import { useNavigate } from 'react-router-dom'; // ADD THIS IMPORT
 import './UserDashboard.css';
 import Settings from "../UserDashboard/Sections/Settings";
-import Projects from "../UserDashboard/Sections/Projects";
+import Projects from "../UserDashboard/Sections/Projects"
 
-const CandidateDashboard = ({ user, onLogout }) => {
+const CandidateDashboard = () => {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [chatExpanded, setChatExpanded] = useState(false);
   const [activeChat, setActiveChat] = useState(null);
@@ -15,6 +16,46 @@ const CandidateDashboard = ({ user, onLogout }) => {
   const [gameScore, setGameScore] = useState(0);
   const [activePage, setActivePage] = useState('dashboard');
 
+  // ✅ USE THE AUTH CONTEXT HOOK
+  const { user, logout } = useAuth();
+  const navigate = useNavigate(); // ADD THIS
+
+  // ✅ STRICT USER TYPE VALIDATION
+  useEffect(() => {
+    console.log("🏠 CandidateDashboard - Current User:", user);
+    console.log("📛 User Name in Dashboard:", user?.name);
+    console.log("🎯 User Type:", user?.userType);
+    
+    // Redirect if user is not a student
+    if (user && user.userType !== 'student') {
+      console.log('🚫 Access denied: User is not a student');
+      navigate('/CompanyDashboard');
+      return;
+    }
+  }, [user, navigate]);
+
+  // ✅ Show loading or access denied if wrong user type
+  if (!user) {
+    return <div className="loading-container">Loading...</div>;
+  }
+
+  if (user.userType !== 'student') {
+    return (
+      <div style={{ padding: '50px', textAlign: 'center' }}>
+        <h2>Access Restricted</h2>
+        <p>Student dashboard is only available for student accounts.</p>
+        <button onClick={() => navigate('/CompanyDashboard')}>
+          Go to Company Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  // ✅ HELPER FUNCTION TO GET USER ROLE - FIXED FOR STUDENT ONLY
+  const getUserRole = () => {
+    return 'Student';
+  };
+
   const toggleSidebar = () => {
     setSidebarExpanded(!sidebarExpanded);
   };
@@ -24,7 +65,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
   };
 
   const generateRandomQuestion = () => {
-    // Placeholder for generating random questions
     const questions = [
       {
         id: 1,
@@ -228,8 +268,8 @@ const CandidateDashboard = ({ user, onLogout }) => {
       }
 
       if (userInput.length > 0 && startTime) {
-        const timeElapsed = (new Date() - startTime) / 1000 / 60; // minutes
-        const wordsTyped = userInput.length / 5; // average word length
+        const timeElapsed = (new Date() - startTime) / 1000 / 60;
+        const wordsTyped = userInput.length / 5;
         setWpm(Math.round(wordsTyped / timeElapsed));
       }
     }, [userInput, startTime]);
@@ -368,13 +408,9 @@ const CandidateDashboard = ({ user, onLogout }) => {
   const Sidebar = ({ activePage, setActivePage }) => {
     const sidebarRef = useRef(null);
 
-    // Close sidebar if clicked outside
     useEffect(() => {
       const handleClickOutside = (event) => {
-        if (
-          sidebarRef.current &&
-          !sidebarRef.current.contains(event.target)
-        ) {
+        if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
           setSidebarExpanded(false);
         }
       };
@@ -388,8 +424,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
         ref={sidebarRef}
         className={`sidebar ${sidebarExpanded ? "expanded" : "collapsed"}`}
       >
-
-        {/* Toggle Button */}
         <button
           className="sidebar-toggle"
           onClick={() => setSidebarExpanded(!sidebarExpanded)}
@@ -397,7 +431,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
           <i className={`fas ${sidebarExpanded ? "fa-chevron-left" : "fa-chevron-right"}`}></i>
         </button>
 
-        {/* Logo */}
         <div className="logo-container">
           <div className="logo">
             <span className="logo-icon"><i className="fas fa-briefcase"></i></span>
@@ -405,7 +438,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
           </div>
         </div>
 
-        {/* Menu Items */}
         <div className="menu-items">
           {[
             { icon: "fa-tachometer-alt", text: "Dashboard", page: "dashboard" },
@@ -420,16 +452,11 @@ const CandidateDashboard = ({ user, onLogout }) => {
             { icon: "fa-cog", text: "Settings", page: "settings" },
           ].map((item, index) => (
             <div key={index} className="menu-group">
-              {/* Parent Menu Item */}
               <div
                 className={`menu-item ${activePage === item.page ? "active" : ""}`}
                 onClick={() => {
                   if (item.page === "resume") {
-                    // Navigate to resume builder
                     window.location.href = "/ResumeBuilder/resumeEditor";
-                  } else if (item.page === "gamification") {
-                    // Navigate to gamification section
-                    setActivePage("gamification");
                   } else {
                     setActivePage(item.page);
                   }
@@ -439,7 +466,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
                 <span className="menu-icon"><i className={`fas ${item.icon}`}></i></span>
                 {sidebarExpanded && <span className="menu-text">{item.text}</span>}
               </div>
-
             </div>
           ))}
         </div>
@@ -494,8 +520,8 @@ const CandidateDashboard = ({ user, onLogout }) => {
                 <div className="resume-header">
                   <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" className="resume-profile-img" />
                   <div>
-                    <h2>John Doe</h2>
-                    <p>Software Developer</p>
+                    <h2>{user?.name || 'Student'}</h2>
+                    <p>{getUserRole()}</p>
                   </div>
                 </div>
                 <div className="resume-section">
@@ -568,7 +594,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
         return (
           <>
             <div className="left-column">
-              {/* Highlight Card */}
               <div className="card highlight-card">
                 <h3>Profile Strength</h3>
                 <div className="progress-bar">
@@ -581,7 +606,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
                 </div>
               </div>
 
-              {/* Statistics Graph */}
               <div className="card">
                 <h3>Applications / Views</h3>
                 <div className="graph-placeholder">
@@ -590,7 +614,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
                 </div>
               </div>
 
-              {/* Ongoing Projects */}
               <div className="card">
                 <h3>Ongoing Projects</h3>
                 <div className="project-cards">
@@ -610,7 +633,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
               </div>
             </div>
 
-            {/* Center Column - LinkedIn-style Posts */}
             <div className="center-column">
               <div className="posts-feed">
                 <div className="feed-header">
@@ -668,7 +690,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
             </div>
 
             <div className="right-column">
-              {/* Enhanced Gamification Section */}
               <div className="card gamification-card">
                 <h3>Career Journey <i className="fas fa-gamepad"></i></h3>
                 <div className="gamification-content">
@@ -693,7 +714,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
                     </div>
                   </div>
 
-                  {/* Game Stats */}
                   <div className="game-stats">
                     <div className="stat">
                       <i className="fas fa-gamepad"></i>
@@ -705,7 +725,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
                     </div>
                   </div>
 
-                  {/* Mini Games */}
                   <div className="mini-games">
                     <h4>Quick Games</h4>
                     <div className="games-grid">
@@ -760,7 +779,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
                 </div>
               </div>
 
-              {/* Chat Section */}
               <div className={`card chat-card ${chatExpanded ? 'expanded' : ''}`}>
                 <div className="chat-header">
                   <h3>Messages</h3>
@@ -838,13 +856,16 @@ const CandidateDashboard = ({ user, onLogout }) => {
         }
       };
 
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';
+  };
+
   return (
     <div className="candidate-dashboard">
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
       
-      {/* Main Content */}
       <div className={`main-content ${sidebarExpanded ? "expanded" : ""}`}>
-        {/* Top Bar */}
         <div className="top-bar">
           <div className="search-bar">
             <i className="fas fa-search"></i>
@@ -863,32 +884,34 @@ const CandidateDashboard = ({ user, onLogout }) => {
               </div>
             </div>
             
-            <div className="profile">
-              <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" className="profile-img" />
-              <div className="profile-info">
-               <span className="profile-name">{user?.name || 'User'}</span>
-                <span className="profile-role">Software Developer</span>
+           <div className="profile-info">
+              <img
+                src={user?.avatar || "https://randomuser.me/api/portraits/men/32.jpg"}
+                alt="User Avatar"
+                className="profile-avatar"
+              />
+              <div className="profile-details">
+                <h3 className="profile-name">{user?.name || 'Student'}</h3>
+                <p className="profile-role">{getUserRole()}</p>
               </div>
-              <button className="logout-btn" onClick={onLogout}>
+              <button className="logout-btn" onClick={handleLogout}>
                 <i className="fas fa-sign-out-alt"></i>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Dashboard Content */}
         <div className="dashboard-content">
           {renderPageContent()}
+        </div>
+        
+        <div className="dashboard-header">
+          <h2>Welcome, {user?.name || "Student"} 👋</h2>
+          <p>Your personalized student dashboard awaits</p>
         </div>
       </div>
     </div>
   );
 };
-
-
-
-    
-      
-       
 
 export default CandidateDashboard;

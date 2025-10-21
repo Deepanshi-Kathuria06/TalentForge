@@ -1,6 +1,8 @@
-import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "../../Pages/Auth/login.css";
+import { useAuth } from "../Auth/AuthContext";
+
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -10,9 +12,9 @@ export const Login = () => {
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
-  // If you have an AuthContext, use it like this:
-  // const { login } = useContext(AuthContext);
+
+  // ✅ Use login from context
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -22,58 +24,47 @@ export const Login = () => {
     }));
   };
 
-  // Simple login function if you don't have context
-  const login = (userData) => {
-    localStorage.setItem("user", JSON.stringify(userData));
-    // You can also set user in state or context here
-  };
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const res = await fetch("http://localhost:5000/api/login", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: formData.email,
-        password: formData.password
-      }),
-    });
+    try {
+      const res = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        }),
+      });
 
-    const result = await res.json();
-    console.log("Login response:", result); // Check this log
+      const result = await res.json();
+      console.log("Login response:", result);
 
-    if (res.ok && result.user) {
-      // ✅ Make sure we have the user object with name
-      if (!result.user.name) {
-        console.error('User name missing in response:', result);
-      }
-      
-      // ✅ Pass the complete user object to login function
-      login(result.user);
-      
-      // Redirect based on userType
-      if (result.user.userType === "student") {
-        navigate("/UDashboard");
-      } else if (result.user.userType === "company") {
-        navigate("/CompanyDashboard");
+      if (res.ok && result.user) {
+        // ✅ Use context login (updates state + localStorage)
+        login(result.user);
+
+        // Redirect based on user type
+        if (result.user.userType === "student") {
+          navigate("/UDashboard");
+        } else if (result.user.userType === "company") {
+          navigate("/CompanyDashboard");
+        } else {
+          navigate("/");
+        }
       } else {
-        navigate("/");
+        alert(result.error || "Invalid login credentials");
       }
-    } else {
-      alert(result.error || "Invalid login credentials");
-    }
 
-  } catch (err) {
-    console.error("❌ Login error:", err);
-    alert("Login failed - check console for details");
-  } finally {
-    setLoading(false);
-  }
-};
+    } catch (err) {
+      console.error("❌ Login error:", err);
+      alert("Login failed - check console for details");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <div className="login-page-container">
