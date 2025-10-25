@@ -17,7 +17,7 @@ html,body{
   overflow-x: hidden;
 }
 
-.landing-container-1 {
+.landing-container {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   color: #004030;
   line-height: 1.6;
@@ -25,7 +25,9 @@ html,body{
   width: 100vw;
   max-width: 1800px;
 }
-
+.title{
+  font-size: 40px;
+}
 .section-container {
   display: flex;
   flex-direction: column;
@@ -37,11 +39,11 @@ html,body{
 }
 
 .section-title {
-  font-size: 2.5rem;
-  text-align: center;
-  margin-bottom: 1rem;
-  color: #004030;
-  font-weight: 700;
+    display: flex
+;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 40px;
 }
 .section-subtitle {
   font-size: 1.2rem;
@@ -63,6 +65,7 @@ html,body{
   overflow: hidden;
   background: linear-gradient(135deg, #001f2b 0%, #004030 100%);
   color: white;
+  padding: 0 20px;
 }
 
 .globe-container {
@@ -105,67 +108,36 @@ html,body{
   animation: pulseGlow 4s ease-in-out infinite alternate;
 }
 
-.globe-node {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: translate(-50%, -50%);
-}
-
-.node-connector {
-  position: absolute;
-  width: 2px;
-  height: 80px;
-  background: linear-gradient(to bottom, rgba(74, 151, 130, 0.8), transparent);
-  top: -80px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-
-
-
-.node-text {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 5px;
-  color: #DCD0A8;
-}
-
-.node-subtext {
-  font-size: 0.8rem;
-  opacity: 0.8;
-}
-
 .globe-hero-content {
   position: relative;
   z-index: 10;
   text-align: center;
-  padding: 0 20px;
   max-width: 800px;
 }
 
-@keyframes rotateGlobe {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.hero-title-line {
+  display: block;
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-@keyframes pulseGlow {
-  from { opacity: 0.5; }
-  to { opacity: 1; }
+.hero-subtitle {
+  font-size: 1.3rem;
+  margin: 30px 0 40px;
+  line-height: 1.6;
 }
 
-/* Rest of the existing CSS remains exactly the same */
-.cta-buttons1 {
+.highlight-text {
+  color: #DCD0A8;
+  font-weight: 600;
+}
+
+.cta-buttons {
   display: flex;
   gap: 20px;
   justify-content: center;
   flex-wrap: wrap;
-  top: 60px;
-  position: relative;
 }
 
 .primary-btn, .secondary-btn {
@@ -180,8 +152,10 @@ html,body{
 }
 
 .primary-btn {
-  background: #004030;
+  background: transparent;
   color: #FFF9E5;
+    border: 2px solid #FFF9E5;
+
 }
 
 .secondary-btn {
@@ -191,15 +165,25 @@ html,body{
 }
 
 .primary-btn:hover {
-  background: #003020;
+  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .secondary-btn:hover {
   background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
 }
+
+@keyframes rotateGlobe {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
 /* Journey Section - Circular Design */
 .journey-section {
   padding: 100px 0;
@@ -227,8 +211,8 @@ html,body{
 
 .central-circle {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 36%;
+  left: 40%;
   transform: translate(-50%, -50%);
   width: 150px;
   height: 150px;
@@ -238,7 +222,7 @@ html,body{
   align-items: center;
   justify-content: center;
   color: var(--white);
-  z-index: 2;
+  z-index: 10;
   box-shadow: var(--box-shadow);
   animation: pulse 4s ease-in-out infinite;
 }
@@ -430,6 +414,7 @@ html,body{
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -438,6 +423,7 @@ html,body{
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 /* Resume Viewer Section */
@@ -739,6 +725,9 @@ font-size: 40px;
   min-width: 300px;
   height: 500px;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .network-center {
@@ -746,6 +735,7 @@ font-size: 40px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 10;
 }
 
 .network-core {
@@ -753,6 +743,7 @@ font-size: 40px;
   height: 150px;
   background: #004030;
   border-radius: 50%;
+
   position: relative;
   z-index: 2;
 }
@@ -935,6 +926,20 @@ font-size: 40px;
   .network-graphic {
     order: -1;
     margin-bottom: 50px;
+    height: 400px;
+  }
+  
+  .network-node {
+    width: 140px;
+    height: 140px;
+    font-size: 0.8rem;
+    padding: 15px;
+  }
+  
+  .network-core {
+    width: 150px;
+    height: 150px;
+    font-size: 1.1rem;
   }
 }
 
@@ -963,6 +968,152 @@ font-size: 40px;
   .feature-content {
     text-align: center;
   }
+  
+  /* Elevate Your Career Section - Mobile Responsive */
+  .circular-features {
+    height: 320px;
+    width: 320px;
+    margin: 30px auto;
+  }
+  
+  .central-circle {
+    width: 110px;
+    height: 110px;
+    top: 50%;
+    left: 50%;
+  }
+  
+  .center-content h3 {
+    font-size: 1rem;
+    margin-bottom: 3px;
+  }
+  
+  .center-content p {
+    font-size: 0.65rem;
+  }
+  
+  .feature-circle {
+    width: 110px;
+    height: 100px;
+    margin-left: -42px;
+    margin-top: -42px;
+  }
+  
+  .feature-icon {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+  }
+  
+  .feature-content h4 {
+    font-size: 0.75rem;
+    margin-bottom: 3px;
+  }
+  
+  .feature-content p {
+    font-size: 0.6rem;
+    line-height: 1.2;
+  }
+  
+  .feature-1 { transform: rotate(0deg) translate(110px) rotate(0deg); }
+  .feature-2 { transform: rotate(60deg) translate(110px) rotate(-60deg); }
+  .feature-3 { transform: rotate(120deg) translate(110px) rotate(-120deg); }
+  .feature-4 { transform: rotate(180deg) translate(110px) rotate(-180deg); }
+  .feature-5 { transform: rotate(240deg) translate(110px) rotate(-240deg); }
+  .feature-6 { transform: rotate(300deg) translate(110px) rotate(-300deg); }
+  
+  /* Resume Editor - Mobile Responsive */
+  .resume-viewer-container {
+    margin: 0 15px;
+    border-radius: 15px;
+  }
+  
+  .resume-tabs {
+    flex-direction: column;
+  }
+  
+  .resume-tab {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  
+  .resume-viewer {
+    padding: 20px;
+    min-height: 400px;
+  }
+  
+  .resume-editor {
+    gap: 15px;
+  }
+  
+  .resume-input {
+    padding: 12px 15px;
+    font-size: 0.9rem;
+  }
+  
+  .resume-textarea {
+    padding: 12px;
+    min-height: 80px;
+    font-size: 0.9rem;
+  }
+  
+  .editor-section h4 {
+    font-size: 1.1rem;
+  }
+  
+  .resume-preview {
+    font-size: 0.9rem;
+  }
+  
+  .preview-header h3 {
+    font-size: 1.5rem;
+  }
+  
+  .preview-section h4 {
+    font-size: 1rem;
+  }
+  
+  .analysis-score {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+  
+  .score-circle {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .score-value {
+    font-size: 2.5rem;
+  }
+  
+  .keyword-tags {
+    justify-content: center;
+  }
+  
+  .keyword-tags span {
+    font-size: 0.8rem;
+    padding: 4px 12px;
+  }
+  
+  /* Network Visualization - Mobile */
+  .network-graphic {
+    height: 300px;
+  }
+  
+  .network-node {
+    width: 100px;
+    height: 100px;
+    font-size: 0.7rem;
+    padding: 8px;
+  }
+  
+  .network-core {
+    width: 120px;
+    height: 120px;
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 576px) {
@@ -988,6 +1139,123 @@ font-size: 40px;
   
   .resume-tab {
     padding: 10px;
+  }
+  
+  /* Elevate Your Career Section - Small Mobile */
+  .circular-features {
+    height: 280px;
+    width: 280px;
+    margin: 25px auto;
+  }
+  
+  .central-circle {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .center-content h3 {
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+  }
+  
+  .center-content p {
+    font-size: 0.55rem;
+  }
+  
+  .feature-circle {
+    width: 90px;
+    height: 80px;
+    margin-left: -35px;
+    margin-top: -35px;
+  }
+  
+  .feature-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+  }
+  
+  .feature-content h4 {
+    font-size: 0.65rem;
+    margin-bottom: 2px;
+  }
+  
+  .feature-content p {
+    font-size: 0.55rem;
+    line-height: 1.1;
+  }
+  
+  .feature-1 { transform: rotate(0deg) translate(90px) rotate(0deg); }
+  .feature-2 { transform: rotate(60deg) translate(90px) rotate(-60deg); }
+  .feature-3 { transform: rotate(120deg) translate(90px) rotate(-120deg); }
+  .feature-4 { transform: rotate(180deg) translate(90px) rotate(-180deg); }
+  .feature-5 { transform: rotate(240deg) translate(90px) rotate(-240deg); }
+  .feature-6 { transform: rotate(300deg) translate(90px) rotate(-300deg); }
+  
+  /* Resume Editor - Small Mobile */
+  .resume-viewer-container {
+    margin: 0 10px;
+    border-radius: 10px;
+  }
+  
+  .resume-viewer {
+    padding: 15px;
+    min-height: 350px;
+  }
+  
+  .resume-input {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .resume-textarea {
+    padding: 10px;
+    min-height: 70px;
+    font-size: 0.85rem;
+  }
+  
+  .editor-section h4 {
+    font-size: 1rem;
+  }
+  
+  .preview-header h3 {
+    font-size: 1.3rem;
+  }
+  
+  .preview-section h4 {
+    font-size: 0.9rem;
+  }
+  
+  .score-circle {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .score-value {
+    font-size: 2rem;
+  }
+  
+  .keyword-tags span {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+  }
+  
+  /* Network Visualization - Small Mobile */
+  .network-graphic {
+    height: 250px;
+  }
+  
+  .network-node {
+    width: 80px;
+    height: 80px;
+    font-size: 0.6rem;
+    padding: 6px;
+  }
+  
+  .network-core {
+    width: 100px;
+    height: 100px;
+    font-size: 0.9rem;
   }
 }
 /* Project Viewer Section */

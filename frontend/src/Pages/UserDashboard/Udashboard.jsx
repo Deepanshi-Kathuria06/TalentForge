@@ -1,9 +1,18 @@
-
+// components/UDashboard.jsx
 import React, { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../Auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useFeed } from '../../components/Feed/FeedContext';
+import CreatePostModal from '../../components/Feed/CreatePostModal';
+import API from '../../utils/api';
 import './UserDashboard.css';
 import Settings from "../UserDashboard/Sections/Settings";
+import Projects from "../UserDashboard/Sections/Projects";
+import Jobs from '../UserDashboard/Sections/Jobs';
+import ApplicationModal from '../../components/jobs/ApplicationModal';
 
-const CandidateDashboard = ({ user, onLogout }) => {
+
+const UDashboard = () => {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
   const [chatExpanded, setChatExpanded] = useState(false);
   const [activeChat, setActiveChat] = useState(null);
@@ -13,6 +22,95 @@ const CandidateDashboard = ({ user, onLogout }) => {
   const [userCode, setUserCode] = useState('');
   const [gameScore, setGameScore] = useState(0);
   const [activePage, setActivePage] = useState('dashboard');
+  const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
+  const [allJobs, setAllJobs] = useState([]);
+  const [jobsLoading, setJobsLoading] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
+const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
+  
+  const { posts: feedPosts, addPost, likePost, addComment, sharePost } = useFeed();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  // ✅ Fetch all jobs when component mounts or when jobs page is active
+  useEffect(() => {
+    if (activePage === 'jobs') {
+      fetchAllJobs();
+    }
+  }, [activePage]);
+
+  // ✅ Fetch all jobs from backend
+  const fetchAllJobs = async () => {
+    setJobsLoading(true);
+    try {
+      console.log('🔍 Fetching jobs from backend...');
+      
+      const response = await API.get('/jobs');
+      
+      console.log('✅ Jobs response from backend:', response.data);
+      
+      if (response.data && Array.isArray(response.data)) {
+        setAllJobs(response.data);
+        console.log(`✅ Loaded ${response.data.length} jobs from backend database`);
+      } else {
+        throw new Error('Invalid response format from backend');
+      }
+    } catch (error) {
+      console.error('❌ Error fetching from backend:', error);
+      console.error('Error details:', error.response?.data);
+      
+      // Fallback to localStorage
+      try {
+        const demoJobs = JSON.parse(localStorage.getItem('demoJobs') || '[]');
+        console.log(`📝 Loaded ${demoJobs.length} jobs from localStorage`);
+        setAllJobs(demoJobs);
+      } catch (storageError) {
+        console.error('Error reading localStorage:', storageError);
+        setAllJobs([]);
+      }
+    } finally {
+      setJobsLoading(false);
+    }
+  };
+
+  const handleCreatePost = (newPost) => {
+    addPost(newPost);
+  };
+
+  // ✅ STRICT USER TYPE VALIDATION
+  useEffect(() => {
+    console.log("🏠 CandidateDashboard - Current User:", user);
+    console.log("📛 User Name in Dashboard:", user?.name);
+    console.log("🎯 User Type:", user?.userType);
+    
+    if (user && user.userType !== 'student') {
+      console.log('🚫 Access denied: User is not a student');
+      navigate('/CompanyDashboard');
+      return;
+    }
+  }, [user, navigate]);
+
+  // ✅ Show loading or access denied if wrong user type
+  if (!user) {
+    return <div className="loading-container">Loading...</div>;
+  }
+
+  if (user.userType !== 'student') {
+    return (
+      <div style={{ padding: '50px', textAlign: 'center' }}>
+        <h2>Access Restricted</h2>
+        <p>Student dashboard is only available for student accounts.</p>
+        <button onClick={() => navigate('/CompanyDashboard')}>
+          Go to Company Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  // ✅ HELPER FUNCTION TO GET USER ROLE
+  const getUserRole = () => {
+    return 'Student';
+  };
 
   const toggleSidebar = () => {
     setSidebarExpanded(!sidebarExpanded);
@@ -23,7 +121,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
   };
 
   const generateRandomQuestion = () => {
-    // Placeholder for generating random questions
     const questions = [
       {
         id: 1,
@@ -95,69 +192,11 @@ const CandidateDashboard = ({ user, onLogout }) => {
     { id: 3, name: 'Michael Chen', role: 'Senior Developer', message: 'Thanks for connecting! Let\'s collab...', time: '2 days ago', unread: false }
   ];
 
-  // LinkedIn-style posts
-  const posts = [
-    {
-      id: 1,
-      author: {
-        name: 'Sarah Johnson',
-        role: 'Senior UX Designer at Google',
-        avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-        isVerified: true
-      },
-      content: '🚀 Just launched my new design system at Google! It took 6 months of research, testing, and iterations. The key learnings: 1) Always involve developers early 2) Test with real users, not assumptions 3) Documentation is as important as the design itself. What has been your experience building design systems?',
-      timestamp: '2 hours ago',
-      likes: 127,
-      comments: 24,
-      shares: 8,
-      image: null
-    },
-    {
-      id: 2,
-      author: {
-        name: 'Alex Chen',
-        role: 'Full Stack Developer | React Enthusiast',
-        avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
-        isVerified: false
-      },
-      content: '💡 Quick tip for React developers: Use React.memo() wisely! It can prevent unnecessary re-renders but don\'t overuse it. Profile your app first to identify actual performance bottlenecks. Remember: premature optimization is the root of all evil. #ReactJS #WebDev #Performance',
-      timestamp: '4 hours ago',
-      likes: 89,
-      comments: 16,
-      shares: 12,
-      image: null
-    },
-    {
-      id: 3,
-      author: {
-        name: 'TechCorp Inc.',
-        role: 'Leading Technology Solutions',
-        avatar: 'https://randomuser.me/api/portraits/men/55.jpg',
-        isVerified: true
-      },
-      content: '🎯 We\'re hiring! Looking for passionate developers to join our team:\n\n• Senior Frontend Developer (React/Vue)\n• Backend Engineer (Node.js/Python)\n• DevOps Engineer (AWS/Docker)\n\nRemote-friendly positions with competitive salary and great benefits. Apply now or share with your network! #Hiring #TechJobs #RemoteWork',
-      timestamp: '1 day ago',
-      likes: 203,
-      comments: 45,
-      shares: 67,
-      image: null
-    },
-    {
-      id: 4,
-      author: {
-        name: 'Maria Rodriguez',
-        role: 'Product Manager | AI Enthusiast',
-        avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
-        isVerified: false
-      },
-      content: '🤖 AI is transforming product management in ways I couldn\'t have imagined 5 years ago. From user research insights to automated A/B testing analysis, we\'re able to make data-driven decisions faster than ever. But remember - AI is a tool to enhance human creativity, not replace it. What AI tools are you using in your work?',
-      timestamp: '1 day ago',
-      likes: 156,
-      comments: 31,
-      shares: 23,
-      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=500&h=300&fit=crop'
-    }
-  ];
+  // ✅ Apply for job function
+  const handleApply = (job) => {
+  setSelectedJob(job);
+  setIsApplicationModalOpen(true);
+};
 
   const MemoryGame = () => {
     const [cards, setCards] = useState([]);
@@ -227,8 +266,8 @@ const CandidateDashboard = ({ user, onLogout }) => {
       }
 
       if (userInput.length > 0 && startTime) {
-        const timeElapsed = (new Date() - startTime) / 1000 / 60; // minutes
-        const wordsTyped = userInput.length / 5; // average word length
+        const timeElapsed = (new Date() - startTime) / 1000 / 60;
+        const wordsTyped = userInput.length / 5;
         setWpm(Math.round(wordsTyped / timeElapsed));
       }
     }, [userInput, startTime]);
@@ -258,7 +297,7 @@ const CandidateDashboard = ({ user, onLogout }) => {
         <textarea
           className="typing-input"
           value={userInput}
-          onChange={(e) => setUserInput(e.target.value)}
+          onChange={(e) => setUserInput(e.value)}
           placeholder="Start typing here..."
         />
       </div>
@@ -367,13 +406,9 @@ const CandidateDashboard = ({ user, onLogout }) => {
   const Sidebar = ({ activePage, setActivePage }) => {
     const sidebarRef = useRef(null);
 
-    // Close sidebar if clicked outside
     useEffect(() => {
       const handleClickOutside = (event) => {
-        if (
-          sidebarRef.current &&
-          !sidebarRef.current.contains(event.target)
-        ) {
+        if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
           setSidebarExpanded(false);
         }
       };
@@ -387,7 +422,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
         ref={sidebarRef}
         className={`sidebar ${sidebarExpanded ? "expanded" : "collapsed"}`}
       >
-        {/* Toggle Button */}
         <button
           className="sidebar-toggle"
           onClick={() => setSidebarExpanded(!sidebarExpanded)}
@@ -395,7 +429,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
           <i className={`fas ${sidebarExpanded ? "fa-chevron-left" : "fa-chevron-right"}`}></i>
         </button>
 
-        {/* Logo */}
         <div className="logo-container">
           <div className="logo">
             <span className="logo-icon"><i className="fas fa-briefcase"></i></span>
@@ -403,48 +436,156 @@ const CandidateDashboard = ({ user, onLogout }) => {
           </div>
         </div>
 
-        {/* Menu Items */}
         <div className="menu-items">
           {[
             { icon: "fa-tachometer-alt", text: "Dashboard", page: "dashboard" },
             { icon: "fa-user", text: "Profile", page: "profile" },
-            { icon: "fa-file-alt", text: "Resume Tools", page: "resume", sub: ["Builder", "ATS Checker"] },
+            { icon: "fa-file-alt", text: "Resume Tools", page: "resume" },
             { icon: "fa-briefcase", text: "Jobs & Internships", page: "jobs" },
             { icon: "fa-building", text: "Companies", page: "companies" },
-            { icon: "fa-users", text: "Networking", page: "network", sub: ["Connections", "Feed", "Messages"] },
-            { icon: "fa-laptop-code", text: "Challenges", page: "challenges", sub: ["Daily Coding", "Skill Tests"] },
-            { icon: "fa-trophy", text: "Gamification", page: "gamification", sub: ["Badges", "Leaderboard", "Rewards"] },
-            { icon: "fa-book", text: "Learning", page: "learning", sub: ["Courses", "Interview Prep", "Resources"] },
+            { icon: "fa-users", text: "Networking", page: "network" },
+            { icon: "fa-laptop-code", text: "Challenges", page: "challenges" },
+            { icon: "fa-book", text: "Projects", page: "projects" },
             { icon: "fa-bell", text: "Notifications", page: "notifications" },
             { icon: "fa-cog", text: "Settings", page: "settings" },
           ].map((item, index) => (
             <div key={index} className="menu-group">
-              {/* Parent Menu Item */}
               <div
                 className={`menu-item ${activePage === item.page ? "active" : ""}`}
-                onClick={() => setActivePage(item.page)}
+                onClick={() => {
+                  if (item.page === "resume") {
+                    window.location.href = "/ResumeBuilder/resumeEditor";
+                  } else {
+                    setActivePage(item.page);
+                  }
+                }}
                 title={!sidebarExpanded ? item.text : ""}
               >
                 <span className="menu-icon"><i className={`fas ${item.icon}`}></i></span>
                 {sidebarExpanded && <span className="menu-text">{item.text}</span>}
               </div>
-
-              {/* Sub-menu */}
-              {sidebarExpanded && item.sub && (
-                <div className="submenu">
-                  {item.sub.map((subItem, idx) => (
-                    <div
-                      key={idx}
-                      className="submenu-item"
-                      onClick={() => console.log(`${item.text} -> ${subItem}`)}
-                    >
-                      {subItem}
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Jobs Component for the jobs page
+  const JobsSection = () => {
+    return (
+      <div className="page-content">
+        <div className="page-header">
+          <h2>Job Opportunities</h2>
+          <p>Find your dream job from various companies</p>
+          <button 
+            className="refresh-btn"
+            onClick={fetchAllJobs}
+            disabled={jobsLoading}
+          >
+            {jobsLoading ? 'Refreshing...' : 'Refresh Jobs'}
+          </button>
+        </div>
+
+        <div className="jobs-container">
+          <h2>Available Jobs ({allJobs.length})</h2>
+          
+          {allJobs.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">💼</div>
+              <h3>No jobs available</h3>
+              <p>Check back later for new job postings</p>
+              <button onClick={fetchAllJobs} className="primary-btn">
+                Refresh Jobs
+              </button>
+            </div>
+          ) : (
+            <div className="jobs-grid">
+              {allJobs.map(job => (
+                <div key={job._id} className="job-card">
+                  <div className="job-header">
+                    <h3 className="job-title">{job.title}</h3>
+                    <span className="company-name">{job.companyName}</span>
+                  </div>
+                  
+                  <div className="job-details">
+                    <div className="detail-item">
+                      <span className="icon">📍</span>
+                      <span>{job.location}</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="icon">💼</span>
+                      <span>{job.type}</span>
+                    </div>
+                    {job.salaryRange && (
+                      <div className="detail-item">
+                        <span className="icon">💰</span>
+                        <span>{job.salaryRange}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="job-description">
+                    <p>{job.description}</p>
+                  </div>
+
+                  {job.skills && (
+                    <div className="job-skills">
+                      <strong>Skills: </strong>
+                      {job.skills}
+                    </div>
+                  )}
+
+                  <div className="job-footer">
+                    <span className="post-date">
+                      Posted: {new Date(job.createdAt).toLocaleDateString()}
+                    </span>
+                    <button 
+  className="apply-btn"
+  onClick={() => handleApply(job)}
+>
+  Apply Now
+</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Debug Info */}
+        <div style={{ 
+          background: '#f8f9fa', 
+          padding: '15px', 
+          margin: '20px 0', 
+          borderRadius: '8px',
+          border: '1px solid #dee2e6'
+        }}>
+          <h4>Debug Information:</h4>
+          <p><strong>Total Jobs:</strong> {allJobs.length}</p>
+          <p><strong>Backend URL:</strong> http://localhost:5000/api/jobs</p>
+          <button 
+            onClick={() => {
+              console.log('All Jobs:', allJobs);
+              console.log('User:', user);
+              
+              fetch('http://localhost:5000/api/jobs')
+                .then(res => res.json())
+                .then(data => console.log('Direct fetch result:', data))
+                .catch(err => console.error('Direct fetch error:', err));
+            }}
+            style={{ 
+              padding: '5px 10px',
+              background: '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              margin: '5px'
+            }}
+          >
+            Test Endpoint
+          </button>
         </div>
       </div>
     );
@@ -497,8 +638,8 @@ const CandidateDashboard = ({ user, onLogout }) => {
                 <div className="resume-header">
                   <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" className="resume-profile-img" />
                   <div>
-                    <h2>John Doe</h2>
-                    <p>Software Developer</p>
+                    <h2>{user?.name || 'Student'}</h2>
+                    <p>{getUserRole()}</p>
                   </div>
                 </div>
                 <div className="resume-section">
@@ -523,73 +664,11 @@ const CandidateDashboard = ({ user, onLogout }) => {
       case 'projects':
         return (
           <div className="page-content">
-            <div className="page-header">
-              <h2>Projects</h2>
-              <p>Showcase your work and portfolio projects</p>
-            </div>
-            <div className="projects-grid">
-              <div className="project-card-large">
-                <div className="project-image">
-                  <i className="fas fa-laptop-code"></i>
-                </div>
-                <div className="project-details">
-                  <h4>E-commerce Platform</h4>
-                  <p>React, Node.js, MongoDB</p>
-                  <p>Full-featured online shopping platform with user authentication, product catalog, and payment processing</p>
-                  <div className="project-status completed">Completed</div>
-                </div>
-              </div>
-              <div className="project-card-large">
-                <div className="project-image">
-                  <i className="fas fa-mobile-alt"></i>
-                </div>
-                <div className="project-details">
-                  <h4>Fitness Tracking App</h4>
-                  <p>React Native, Firebase</p>
-                  <p>Mobile application for tracking workouts, nutrition, and health metrics</p>
-                  <div className="project-status in-progress">In Progress</div>
-                </div>
-              </div>
-            </div>
+            <Projects />
           </div>
         );
-      case 'apps':
-        return (
-          <div className="page-content">
-            <div className="page-header">
-              <h2>Job Applications</h2>
-              <p>Track your job applications and interviews</p>
-            </div>
-            <div className="applications-list">
-              <div className="application-item">
-                <div className="app-company">
-                  <img src="https://logo.clearbit.com/google.com" alt="Google" className="company-logo" />
-                  <div>
-                    <h4>Senior Frontend Developer</h4>
-                    <p>Google · Mountain View, CA</p>
-                  </div>
-                </div>
-                <div className="app-status">
-                  <span className="status in-review">In Review</span>
-                  <p>Applied 3 days ago</p>
-                </div>
-              </div>
-              <div className="application-item">
-                <div className="app-company">
-                  <img src="https://logo.clearbit.com/microsoft.com" alt="Microsoft" className="company-logo" />
-                  <div>
-                    <h4>Full Stack Engineer</h4>
-                    <p>Microsoft · Redmond, WA</p>
-                  </div>
-                </div>
-                <div className="app-status">
-                  <span className="status interview">Interview Scheduled</span>
-                  <p>Applied 1 week ago</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
+      case 'jobs':
+        return <JobsSection />;
       case "settings":
         return <Settings />;
       case 'dashboard':
@@ -597,7 +676,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
         return (
           <>
             <div className="left-column">
-              {/* Highlight Card */}
               <div className="card highlight-card">
                 <h3>Profile Strength</h3>
                 <div className="progress-bar">
@@ -610,7 +688,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
                 </div>
               </div>
 
-              {/* Statistics Graph */}
               <div className="card">
                 <h3>Applications / Views</h3>
                 <div className="graph-placeholder">
@@ -619,7 +696,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
                 </div>
               </div>
 
-              {/* Ongoing Projects */}
               <div className="card">
                 <h3>Ongoing Projects</h3>
                 <div className="project-cards">
@@ -639,18 +715,20 @@ const CandidateDashboard = ({ user, onLogout }) => {
               </div>
             </div>
 
-            {/* Center Column - LinkedIn-style Posts */}
             <div className="center-column">
               <div className="posts-feed">
                 <div className="feed-header">
                   <h3>Professional Feed</h3>
-                  <button className="post-button">
+                  <button 
+                    className="post-button"
+                    onClick={() => setIsCreatePostModalOpen(true)}
+                  >
                     <i className="fas fa-plus"></i> Share Update
                   </button>
                 </div>
                 
                 <div className="posts-container">
-                  {posts.map(post => (
+                  {feedPosts.map(post => (
                     <div key={post.id} className="post-card">
                       <div className="post-header">
                         <img src={post.author.avatar} alt={post.author.name} className="author-avatar" />
@@ -669,35 +747,57 @@ const CandidateDashboard = ({ user, onLogout }) => {
                       
                       <div className="post-content">
                         <p>{post.content}</p>
-                        {post.image && (
-                          <div className="post-image">
-                            <img src={post.image} alt="Post content" />
+                        {post.images && post.images.length > 0 && (
+                          <div className="post-images-grid">
+                            {post.images.map((image, index) => (
+                              <img key={index} src={image} alt={`Post image ${index}`} />
+                            ))}
                           </div>
                         )}
                       </div>
                       
                       <div className="post-actions">
-                        <button className="action-button like-btn">
+                        <button 
+                          className={`action-button like-btn ${post.liked ? 'liked' : ''}`}
+                          onClick={() => likePost(post.id)}
+                        >
                           <i className="fas fa-thumbs-up"></i>
                           <span>{post.likes}</span>
                         </button>
                         <button className="action-button comment-btn">
                           <i className="fas fa-comment"></i>
-                          <span>{post.comments}</span>
+                          <span>{post.comments?.length || 0}</span>
                         </button>
-                        <button className="action-button share-btn">
+                        <button 
+                          className="action-button share-btn"
+                          onClick={() => sharePost(post.id)}
+                        >
                           <i className="fas fa-share"></i>
                           <span>{post.shares}</span>
                         </button>
                       </div>
+
+                      {post.comments && post.comments.length > 0 && (
+                        <div className="comments-section">
+                          {post.comments.map(comment => (
+                            <div key={comment.id} className="comment">
+                              <img src={comment.author.avatar} alt={comment.author.name} className="comment-avatar" />
+                              <div className="comment-content">
+                                <div className="comment-author">{comment.author.name}</div>
+                                <div className="comment-text">{comment.text}</div>
+                                <div className="comment-timestamp">{comment.timestamp}</div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
               </div>
             </div>
-
+                      
             <div className="right-column">
-              {/* Enhanced Gamification Section */}
               <div className="card gamification-card">
                 <h3>Career Journey <i className="fas fa-gamepad"></i></h3>
                 <div className="gamification-content">
@@ -722,7 +822,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
                     </div>
                   </div>
 
-                  {/* Game Stats */}
                   <div className="game-stats">
                     <div className="stat">
                       <i className="fas fa-gamepad"></i>
@@ -734,7 +833,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
                     </div>
                   </div>
 
-                  {/* Mini Games */}
                   <div className="mini-games">
                     <h4>Quick Games</h4>
                     <div className="games-grid">
@@ -789,7 +887,6 @@ const CandidateDashboard = ({ user, onLogout }) => {
                 </div>
               </div>
 
-              {/* Chat Section */}
               <div className={`card chat-card ${chatExpanded ? 'expanded' : ''}`}>
                 <div className="chat-header">
                   <h3>Messages</h3>
@@ -867,13 +964,16 @@ const CandidateDashboard = ({ user, onLogout }) => {
         }
       };
 
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';
+  };
+
   return (
     <div className="candidate-dashboard">
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
       
-      {/* Main Content */}
-      <div className="main-content">
-        {/* Top Bar */}
+      <div className={`main-content ${sidebarExpanded ? "expanded" : ""}`}>
         <div className="top-bar">
           <div className="search-bar">
             <i className="fas fa-search"></i>
@@ -892,32 +992,48 @@ const CandidateDashboard = ({ user, onLogout }) => {
               </div>
             </div>
             
-            <div className="profile">
-              <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" className="profile-img" />
-              <div className="profile-info">
-               <span className="profile-name">{user?.name || 'User'}</span>
-                <span className="profile-role">Software Developer</span>
+           <div className="profile-info">
+              <img
+                src={user?.avatar || "https://randomuser.me/api/portraits/men/32.jpg"}
+                alt="User Avatar"
+                className="profile-avatar"
+              />
+              <div className="profile-details">
+                <h3 className="profile-name">{user?.name || 'Student'}</h3>
+                <p className="profile-role">{getUserRole()}</p>
               </div>
-              <button className="logout-btn" onClick={onLogout}>
+              <button className="logout-btn" onClick={handleLogout}>
                 <i className="fas fa-sign-out-alt"></i>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Dashboard Content */}
         <div className="dashboard-content">
           {renderPageContent()}
         </div>
+        
+       
       </div>
+      <CreatePostModal
+      isOpen={isCreatePostModalOpen}
+      onClose={() => setIsCreatePostModalOpen(false)}
+      onSubmit={handleCreatePost}
+    />
+
+    <ApplicationModal
+  job={selectedJob}
+  isOpen={isApplicationModalOpen}
+  onClose={() => setIsApplicationModalOpen(false)}
+  onSuccess={(application) => {
+    console.log("Application submitted:", application);
+    // You can update UI here if needed
+  }}
+/>
     </div>
+
+    
   );
 };
 
-
-
-    
-      
-       
-
-export default CandidateDashboard;
+export default UDashboard;

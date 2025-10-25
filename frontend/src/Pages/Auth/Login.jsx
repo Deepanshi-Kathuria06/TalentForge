@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "../../Pages/Auth/login.css";
+import { useAuth } from "../Auth/AuthContext";
+
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +10,11 @@ export const Login = () => {
     password: '',
     rememberMe: false
   });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // ✅ Use login from context
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -17,10 +24,47 @@ export const Login = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login data:', formData);
+    setLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        }),
+      });
+
+      const result = await res.json();
+      console.log("Login response:", result);
+
+      if (res.ok && result.user) {
+        // ✅ Use context login (updates state + localStorage)
+        login(result.user);
+
+        // Redirect based on user type
+        if (result.user.userType === "student") {
+          navigate("/UDashboard");
+        } else if (result.user.userType === "company") {
+          navigate("/CompanyDashboard");
+        } else {
+          navigate("/");
+        }
+      } else {
+        alert(result.error || "Invalid login credentials");
+      }
+
+    } catch (err) {
+      console.error("❌ Login error:", err);
+      alert("Login failed - check console for details");
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   return (
     <div className="login-page-container">
@@ -58,6 +102,7 @@ export const Login = () => {
                 required
                 placeholder="your@email.com"
                 className="login-input"
+                disabled={loading}
               />
             </div>
           </div>
@@ -74,6 +119,7 @@ export const Login = () => {
                 required
                 placeholder="Enter your password"
                 className="login-input"
+                disabled={loading}
               />
             </div>
           </div>
@@ -87,6 +133,7 @@ export const Login = () => {
                 checked={formData.rememberMe}
                 onChange={handleChange}
                 className="remember-me-checkbox"
+                disabled={loading}
               />
               <label htmlFor="remember-me">Remember me</label>
             </div>
@@ -95,18 +142,21 @@ export const Login = () => {
             </Link>
           </div>
 
-          <button type="submit" className="login-page-submit-button">
-            Sign In
+          <button 
+            type="submit" 
+            className="login-page-submit-button"
+            disabled={loading}
+          >
+            {loading ? 'Signing In...' : 'Sign In'}
             <svg className="login-page-button-icon" viewBox="0 0 24 24">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </button>
 
           <div className="login-page-signup-prompt">
-            Don't have an account? <Link to="/signup" className="login-page-signup-link"
-            onClick={() => console.log('Redirect to signup')}>
-            
-            Sign up</Link>
+            Don't have an account? <Link to="/signup" className="login-page-signup-link">
+              Sign up
+            </Link>
           </div>
 
           <div className="login-divider">
@@ -114,8 +164,6 @@ export const Login = () => {
             <span className="divider-text">or continue with</span>
             <span className="divider-line"></span>
           </div>
-
-          
         </form>
       </div>
     </div>

@@ -1,18 +1,16 @@
+// SavedDesigns.jsx
 import React, { useState, useEffect } from "react";
 import "../ResumeBuilder/saveddesign.css";
 import { useNavigate } from "react-router-dom";  
-
-
-import ModernResume from "../Templates/ClassicResume"
-import ClassicResume from "../Templates/ModernResume"
+import ModernResume from "../Templates/ModernResume";
+import ClassicResume from "../Templates/ClassicResume";
 
 const SavedDesigns = () => {
-    const navigate = useNavigate();   // <-- add this
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState("templates");
   
   const [savedDesigns, setSavedDesigns] = useState([
-    
     { 
       id: 102, 
       name: "Job Application", 
@@ -20,9 +18,6 @@ const SavedDesigns = () => {
       template: "classic",
       tags: ["Corporate", "Formal"]
     },
-    
-
-
   ]);
 
   const [templates] = useState([
@@ -30,18 +25,16 @@ const SavedDesigns = () => {
       id: 1, 
       name: "Modern Resume", 
       category: "Popular",
-      component: <ModernResume previewMode={true} />
+      component: <ModernResume previewMode={true} />,
+      type: "modern"  // Add template type
     },
     { 
       id: 2, 
       name: "Classic Resume", 
       category: "Professional",
-      component: <ClassicResume previewMode={true} />
+      component: <ClassicResume previewMode={true} />,
+      type: "classic"  // Add template type
     },
-   
-  
-    
-   
   ]);
 
   const [categories] = useState(["All", "Professional", "Popular"]);
@@ -69,7 +62,6 @@ const SavedDesigns = () => {
     )
     .sort((a, b) => {
       if (sortBy === "recent") {
-        // For demo purposes, we'll use ID as a proxy for date
         return b.id - a.id;
       } else if (sortBy === "oldest") {
         return a.id - b.id;
@@ -81,7 +73,17 @@ const SavedDesigns = () => {
 
   const mostRecentDesign = filteredAndSortedDesigns.length > 0 ? filteredAndSortedDesigns[0] : null;
 
- 
+  // Handle Use Template functionality
+  const handleUseTemplate = (template) => {
+    navigate("../ResumeBuilder/resumeEditor", { 
+      state: { 
+        templateId: template.id,
+        templateType: template.type,
+        templateName: template.name
+      } 
+    });
+  };
+
   const handleDeleteDesign = (id) => {
     setSavedDesigns(savedDesigns.filter(design => design.id !== id));
   };
@@ -93,11 +95,12 @@ const SavedDesigns = () => {
           <h1>Design Resumes That Get Noticed</h1>
           <p>Create, edit, and manage professional resumes that stand out from the crowd</p>
           <button className="saved-designs-btn-hero-primary"
-        onClick={() => navigate("../ResumeBuilder/resumeEditor")}
-          >Create New Resume</button>
+            onClick={() => navigate("../ResumeBuilder/resumeEditor")}
+          >
+            Create New Resume
+          </button>
         </div>
         
-     
         <div className="saved-designs-hero-shape saved-designs-hero-shape-1"></div>
         <div className="saved-designs-hero-shape saved-designs-hero-shape-2"></div>
         <div className="saved-designs-hero-shape saved-designs-hero-shape-3"></div>
@@ -264,7 +267,12 @@ const SavedDesigns = () => {
                   <div className="saved-designs-template-info">
                     <h4>{template.name}</h4>
                     <span className="saved-designs-template-category">{template.category}</span>
-                    <button className="saved-designs-btn-use-template">Use This Template</button>
+                    <button 
+                      className="saved-designs-btn-use-template"
+                      onClick={() => handleUseTemplate(template)}
+                    >
+                      Use This Template
+                    </button>
                   </div>
                 </div>
               ))}

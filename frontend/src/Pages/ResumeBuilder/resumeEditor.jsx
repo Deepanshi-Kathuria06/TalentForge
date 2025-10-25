@@ -1,15 +1,29 @@
-// ResumeBuilder.jsx
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
+import { useLocation } from "react-router-dom";
 import { 
   FaUser, FaGraduationCap, FaBriefcase, FaBolt, FaFolderOpen, 
   FaFilePdf, FaPaintBrush, FaPlus, FaSave 
 } from 'react-icons/fa';
+import html2pdf from "html2pdf.js";
 
-import "../ResumeBuilder/Resume.css"
+import ModernResume from "../Templates/ModernResume";
+import ClassicResume from "../Templates/ClassicResume";
+
+import "../ResumeBuilder/Resume.css";
 
 const ResumeBuilder = () => {
-  const { register, control, handleSubmit, watch } = useForm({
+  const location = useLocation();
+  
+  const [selectedTemplate, setSelectedTemplate] = useState(
+    location.state?.templateType || 'classic'
+  );
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [activeTab, setActiveTab] = useState('personal');
+  const [previewScale, setPreviewScale] = useState(1);
+  
+  const { register, control, handleSubmit, watch, setValue } = useForm({
     defaultValues: {
       personalInfo: {
         name: '',
@@ -24,11 +38,6 @@ const ResumeBuilder = () => {
       projects: []
     }
   });
-  
-  // State for selected template
-  const [selectedTemplate, setSelectedTemplate] = useState('professional');
-  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
-  const [activeTab, setActiveTab] = useState('personal');
   
   const { fields: educationFields, append: appendEducation, remove: removeEducation } = useFieldArray({
     control,
@@ -53,20 +62,167 @@ const ResumeBuilder = () => {
   const resumeRef = useRef();
   const formData = watch();
   
+  useEffect(() => {
+    if (location.state?.templateName) {
+      console.log(`Using template: ${location.state.templateName}`);
+    }
+  }, [location.state]);
+  
   const exportToPDF = () => {
-    window.print();
+    const element = resumeRef.current;
+    if (!element) return;
+    
+    const originalTransform = element.style.transform;
+    const originalWidth = element.style.width;
+    const originalHeight = element.style.height;
+    
+    element.style.transform = 'none';
+    element.style.width = 'auto';
+    element.style.height = 'auto';
+    
+    html2pdf()
+      .set({
+        margin: 0.5,
+        filename: "resume.pdf",
+        html2canvas: { 
+          scale: 2,
+          useCORS: true,
+          logging: false
+        },
+        jsPDF: { 
+          unit: "in", 
+          format: "letter", 
+          orientation: "portrait" 
+        }
+      })
+      .from(element)
+      .save()
+      .then(() => {
+        element.style.transform = originalTransform;
+        element.style.width = originalWidth;
+        element.style.height = originalHeight;
+      });
   };
   
+  const zoomIn = () => {
+    setPreviewScale(prev => Math.min(prev + 0.1, 2)); 
+  };
+
+  const zoomOut = () => {
+    setPreviewScale(prev => Math.max(prev - 0.1, 0.5));
+  };
+
+  const resetZoom = () => {
+    setPreviewScale(1);
+  };
+
   const onSubmit = (data) => {
-    console.log(data);
+    console.log('Resume data:', data);
+    console.log('Template:', selectedTemplate);
+    // Save logic here
+  };
+
+  // Handle direct editing from preview
+  const handleContentEdit = (fieldPath, newValue) => {
+    setValue(fieldPath, newValue);
+  };
+
+  // Clean Editable Field Component (No Pen Icon)
+  const EditableField = ({ 
+    fieldPath, 
+    defaultValue, 
+    className = "", 
+    tag: Tag = "span",
+    placeholder = "Click to edit...",
+    multiline = false
+  }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [value, setValue] = useState(defaultValue || "");
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+      setValue(defaultValue || "");
+    }, [defaultValue]);
+
+    const handleClick = (e) => {
+      e.stopPropagation();
+      setIsEditing(true);
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+          if (multiline) {
+            inputRef.current.setSelectionRange(value.length, value.length);
+          }
+        }
+      }, 0);
+    };
+
+    const handleSave = () => {
+      if (value !== defaultValue) {
+        handleContentEdit(fieldPath, value);
+      }
+      setIsEditing(false);
+    };
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter' && !multiline) {
+        e.preventDefault();
+        handleSave();
+      } else if (e.key === 'Escape') {
+        setValue(defaultValue || "");
+        setIsEditing(false);
+      }
+    };
+
+    const handleBlur = () => {
+      handleSave();
+    };
+
+    if (isEditing) {
+      if (multiline) {
+        return (
+          <textarea
+            ref={inputRef}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            className={`editable-field ${className} editing`}
+            placeholder={placeholder}
+            rows={3}
+          />
+        );
+      }
+      
+      return (
+        <input
+          ref={inputRef}
+          type="text"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          className={`editable-field ${className} editing`}
+          placeholder={placeholder}
+        />
+      );
+    }
+
+    return (
+      <Tag 
+        className={`editable-field ${className} ${!defaultValue ? 'empty' : ''}`}
+        onClick={handleClick}
+        title="Click to edit"
+      >
+        {defaultValue || placeholder}
+      </Tag>
+    );
   };
 
   // Template options
   const templates = [
-    { id: 'professional', name: 'Professional' },
     { id: 'modern', name: 'Modern' },
-    { id: 'creative', name: 'Creative' },
-    { id: 'minimalist', name: 'Minimalist' }
+    { id: 'classic', name: 'Classic' },
   ];
 
   // Tab options
@@ -78,12 +234,245 @@ const ResumeBuilder = () => {
     { id: 'projects', name: 'Projects', icon: <FaFolderOpen /> }
   ];
 
+  // Template renderer with zoom functionality
+  const renderTemplate = () => {
+    const templateProps = {
+      data: formData,
+      previewMode: false,
+      onFieldEdit: handleContentEdit,
+      EditableField: EditableField
+    };
+
+    switch (selectedTemplate) {
+      case 'modern':
+        return <ModernResume {...templateProps} />;
+      case 'classic':
+        return <ClassicResume {...templateProps} />;
+      default:
+        return (
+          <div className={`resume template-${selectedTemplate} editable-resume`}>
+            <div className="resume-header">
+              <h1 className="resume-name">
+                <EditableField 
+                  fieldPath="personalInfo.name"
+                  defaultValue={formData.personalInfo?.name}
+                  tag="h1"
+                  placeholder="Your Name"
+                  className="resume-name-editable"
+                />
+              </h1>
+              <div className="contact-info">
+                <EditableField 
+                  fieldPath="personalInfo.email"
+                  defaultValue={formData.personalInfo?.email}
+                  placeholder="your.email@example.com"
+                />
+                {formData.personalInfo?.email && formData.personalInfo?.phone && " | "}
+                <EditableField 
+                  fieldPath="personalInfo.phone"
+                  defaultValue={formData.personalInfo?.phone}
+                  placeholder="+1 (555) 123-4567"
+                />
+                {(formData.personalInfo?.email || formData.personalInfo?.phone) && formData.personalInfo?.location && " | "}
+                <EditableField 
+                  fieldPath="personalInfo.location"
+                  defaultValue={formData.personalInfo?.location}
+                  placeholder="City, Country"
+                />
+              </div>
+            </div>
+            
+            {formData.personalInfo?.summary && (
+              <div className="resume-section">
+                <h2 className="section-title-resume">Professional Summary</h2>
+                <p className="summary-text">
+                  <EditableField 
+                    fieldPath="personalInfo.summary"
+                    defaultValue={formData.personalInfo?.summary}
+                    multiline={true}
+                    placeholder="Briefly describe your professional background..."
+                    className="summary-editable"
+                  />
+                </p>
+              </div>
+            )}
+            
+            {formData.education && formData.education.length > 0 && (
+              <div className="resume-section">
+                <h2 className="section-title-resume">Education</h2>
+                {formData.education.map((edu, index) => (
+                  <div key={index} className="experience-item">
+                    <div className="experience-header">
+                      <div>
+                        <h3>
+                          <EditableField 
+                            fieldPath={`education.${index}.institution`}
+                            defaultValue={edu.institution}
+                            placeholder="University Name"
+                          />
+                        </h3>
+                        <p className="degree">
+                          <EditableField 
+                            fieldPath={`education.${index}.degree`}
+                            defaultValue={edu.degree}
+                            placeholder="Degree"
+                          />
+                          {edu.field && " in "}
+                          {edu.field && (
+                            <EditableField 
+                              fieldPath={`education.${index}.field`}
+                              defaultValue={edu.field}
+                              placeholder="Field of Study"
+                            />
+                          )}
+                        </p>
+                      </div>
+                      <span className="date-range">
+                        <EditableField 
+                          fieldPath={`education.${index}.startDate`}
+                          defaultValue={edu.startDate}
+                          placeholder="Start Date"
+                        />
+                        {edu.startDate && edu.endDate ? ' - ' : ''}
+                        <EditableField 
+                          fieldPath={`education.${index}.endDate`}
+                          defaultValue={edu.endDate}
+                          placeholder="End Date"
+                        />
+                      </span>
+                    </div>
+                    {edu.description && (
+                      <p className="description">
+                        <EditableField 
+                          fieldPath={`education.${index}.description`}
+                          defaultValue={edu.description}
+                          multiline={true}
+                          placeholder="Description..."
+                        />
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {formData.experience && formData.experience.length > 0 && (
+              <div className="resume-section">
+                <h2 className="section-title-resume">Work Experience</h2>
+                {formData.experience.map((exp, index) => (
+                  <div key={index} className="experience-item">
+                    <div className="experience-header">
+                      <div>
+                        <h3>
+                          <EditableField 
+                            fieldPath={`experience.${index}.company`}
+                            defaultValue={exp.company}
+                            placeholder="Company Name"
+                          />
+                        </h3>
+                        <p className="position">
+                          <EditableField 
+                            fieldPath={`experience.${index}.position`}
+                            defaultValue={exp.position}
+                            placeholder="Job Title"
+                          />
+                        </p>
+                      </div>
+                      <span className="date-range">
+                        <EditableField 
+                          fieldPath={`experience.${index}.startDate`}
+                          defaultValue={exp.startDate}
+                          placeholder="Start Date"
+                        />
+                        {exp.startDate && exp.endDate ? ' - ' : ''}
+                        <EditableField 
+                          fieldPath={`experience.${index}.endDate`}
+                          defaultValue={exp.endDate}
+                          placeholder="End Date"
+                        />
+                      </span>
+                    </div>
+                    {exp.description && (
+                      <p className="description">
+                        <EditableField 
+                          fieldPath={`experience.${index}.description`}
+                          defaultValue={exp.description}
+                          multiline={true}
+                          placeholder="Describe your responsibilities..."
+                        />
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {formData.skills && formData.skills.length > 0 && (
+              <div className="resume-section">
+                <h2 className="section-title-resume">Skills</h2>
+                <div className="skills-list">
+                  {formData.skills.map((skill, index) => (
+                    <span key={index} className="skill-tag">
+                      <EditableField 
+                        fieldPath={`skills.${index}.name`}
+                        defaultValue={skill.name}
+                        placeholder="Skill name"
+                      />
+                      {skill.level && <span className="skill-level-badge">{skill.level}</span>}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {formData.projects && formData.projects.length > 0 && (
+              <div className="resume-section">
+                <h2 className="section-title-resume">Projects</h2>
+                {formData.projects.map((project, index) => (
+                  <div key={index} className="experience-item">
+                    <h3>
+                      <EditableField 
+                        fieldPath={`projects.${index}.name`}
+                        defaultValue={project.name}
+                        placeholder="Project Name"
+                      />
+                    </h3>
+                    {project.technologies && (
+                      <p className="technologies">
+                        Technologies: <EditableField 
+                          fieldPath={`projects.${index}.technologies`}
+                          defaultValue={project.technologies}
+                          placeholder="Technologies used"
+                        />
+                      </p>
+                    )}
+                    {project.description && (
+                      <p className="description">
+                        <EditableField 
+                          fieldPath={`projects.${index}.description`}
+                          defaultValue={project.description}
+                          multiline={true}
+                          placeholder="Project description..."
+                        />
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+    }
+  };
+
   return (
     <div className="resume-builder-container">
       <header className="resume-header">
         <div className="logo-section">
           <h1 className="logo">ResumeBuilder</h1>
-          <span className="logo-subtitle">Professional Resume Builder</span>
+          <span className="logo-subtitle">
+            {location.state?.templateName ? `Editing: ${location.state.templateName}` : 'Professional Resume Builder'}
+          </span>
         </div>
         <div className="header-controls">
           <button 
@@ -139,7 +528,14 @@ const ResumeBuilder = () => {
       )}
       
       <div className="content1">
-        <div className="sidebar-container1">
+        <div className={`sidebar-container1 ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+          <button 
+            className="sidebar-collapse-toggle" 
+            onClick={() => setIsSidebarCollapsed(prev => !prev)}
+            title={isSidebarCollapsed ? 'Expand' : 'Collapse'}
+          >
+            {isSidebarCollapsed ? '→' : '←'}
+          </button>
           <div className="tab-navigation1">
             {tabs.map(tab => (
               <button
@@ -667,103 +1063,42 @@ const ResumeBuilder = () => {
 
         <div className="preview">
           <div className="preview-header">
-            <h3>Live Preview</h3>
+            <h3>Live Preview - {selectedTemplate.charAt(0).toUpperCase() + selectedTemplate.slice(1)} Template</h3>
             <div className="preview-controls">
-              <button className="preview-zoom">−</button>
-              <span className="preview-scale">100%</span>
-              <button className="preview-zoom">+</button>
+              <button className="preview-zoom" onClick={zoomOut} title="Zoom Out">
+                −
+              </button>
+              <span 
+                className="preview-scale" 
+                onClick={resetZoom}
+                title="Click to reset to 100%"
+                style={{cursor: 'pointer'}}
+              >
+                {Math.round(previewScale * 100)}%
+              </span>
+              <button className="preview-zoom" onClick={zoomIn} title="Zoom In">
+                +
+              </button>
             </div>
           </div>
           <div className="preview-content">
-            <div ref={resumeRef} className={`resume template-${selectedTemplate}`}>
-              <div className="resume-header">
-                <h1 className="resume-name">{formData.personalInfo?.name || "Your Name"}</h1>
-                <div className="contact-info">
-                  {formData.personalInfo?.email && <span>{formData.personalInfo.email}</span>}
-                  {formData.personalInfo?.phone && <span>{formData.personalInfo.phone}</span>}
-                  {formData.personalInfo?.location && <span>{formData.personalInfo.location}</span>}
-                </div>
-              </div>
-              
-              {formData.personalInfo?.summary && (
-                <div className="resume-section">
-                  <h2 className="section-title-resume">Professional Summary</h2>
-                  <p className="summary-text">{formData.personalInfo.summary}</p>
-                </div>
-              )}
-              
-              {formData.education && formData.education.length > 0 && (
-                <div className="resume-section">
-                  <h2 className="section-title-resume">Education</h2>
-                  {formData.education.map((edu, index) => (
-                    <div key={index} className="experience-item">
-                      <div className="experience-header">
-                        <div>
-                          <h3>{edu.institution}</h3>
-                          <p className="degree">{edu.degree} {edu.field && `in ${edu.field}`}</p>
-                        </div>
-                        <span className="date-range">
-                          {edu.startDate} {edu.startDate && edu.endDate ? ' - ' : ''} {edu.endDate}
-                        </span>
-                      </div>
-                      {edu.description && <p className="description">{edu.description}</p>}
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              {formData.experience && formData.experience.length > 0 && (
-                <div className="resume-section">
-                  <h2 className="section-title-resume">Work Experience</h2>
-                  {formData.experience.map((exp, index) => (
-                    <div key={index} className="experience-item">
-                      <div className="experience-header">
-                        <div>
-                          <h3>{exp.company}</h3>
-                          <p className="position">{exp.position}</p>
-                        </div>
-                        <span className="date-range">
-                          {exp.startDate} {exp.startDate && exp.endDate ? ' - ' : ''} {exp.endDate}
-                        </span>
-                      </div>
-                      {exp.description && <p className="description">{exp.description}</p>}
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              {formData.skills && formData.skills.length > 0 && (
-                <div className="resume-section">
-                  <h2 className="section-title-resume">Skills</h2>
-                  <div className="skills-list">
-                    {formData.skills.map((skill, index) => (
-                      <span key={index} className="skill-tag">
-                        {skill.name}
-                        {skill.level && <span className="skill-level-badge">{skill.level}</span>}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {formData.projects && formData.projects.length > 0 && (
-                <div className="resume-section">
-                  <h2 className="section-title-resume">Projects</h2>
-                  {formData.projects.map((project, index) => (
-                    <div key={index} className="experience-item">
-                      <h3>{project.name}</h3>
-                      {project.technologies && (
-                        <p className="technologies">Technologies: {project.technologies}</p>
-                      )}
-                      {project.description && <p className="description">{project.description}</p>}
-                    </div>
-                  ))}
-                </div>
-              )}
+            <div 
+              ref={resumeRef}
+              style={{
+                transform: `scale(${previewScale})`,
+                transformOrigin: 'top center',
+                transition: 'transform 0.2s ease',
+                width: 'fit-content',
+                margin: '0 auto'
+              }}
+            >
+              {renderTemplate()}
             </div>
           </div>
         </div>
       </div>
+      
+     
     </div>
   );
 };

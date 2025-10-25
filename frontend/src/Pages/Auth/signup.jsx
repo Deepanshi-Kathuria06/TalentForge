@@ -29,17 +29,30 @@ const SignupPage = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    const userData = {
-      userType,
-      ...formData,
-      joinedDate: new Date().toISOString()
-    };
+// Updated Signup.jsx - handleSubmit function
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  const userData = {
+    userType,
+    name: formData.name, // Make sure this is included
+    email: formData.email,
+    password: formData.password,
+    ...(userType === 'student' ? {
+      university: formData.university,
+      major: formData.major,
+      graduationYear: formData.graduationYear
+    } : {
+      industry: formData.industry,
+      companySize: formData.companySize,
+      website: formData.website
+    }),
+    joinedDate: new Date().toISOString()
+  };
 
-    try {
-    // ✅ Call your backend API (MongoDB)
+  console.log("📤 Sending signup data:", userData);
+
+  try {
     const res = await fetch("http://localhost:5000/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -47,56 +60,38 @@ const SignupPage = () => {
     });
 
     const result = await res.json();
-    console.log("Signup response:", result);
+    console.log("🔐 Signup API Response:", result);
 
     if (result.user) {
+      console.log("✅ User data from signup:", result.user);
+      
+      // Ensure all required fields are present
+      const completeUser = {
+        ...result.user,
+        name: result.user.name || formData.name, // Fallback to form data
+        userType: result.user.userType || userType
+      };
+      
+      console.log("✅ Complete user data for context:", completeUser);
+      
       // Save session
-      login(result.user);
+      login(completeUser);
 
-      // Redirect based on type
-      if (userType === "student") navigate("/UDashboard");
-      else navigate("/CompanyDashboard");
-
-      return;
-    }
-  } catch (err) {
-    console.error("❌ Backend signup error:", err);
-  }
-
-    try {
-      const res = await fetch("https://talentforge.app.n8n.cloud/webhook-test/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
-
-      const result = await res.json();
-      console.log("Signup response:", result);
-
-      if (result.user) {
-        login(result.user);
+      // Redirect with small delay
+      setTimeout(() => {
         if (userType === "student") navigate("/UDashboard");
         else navigate("/CompanyDashboard");
-        return;
-      }
-    } catch (err) {
-      console.error("Signup error:", err);
-    }
+      }, 100);
 
-    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-    localStorage.setItem('users', JSON.stringify([...existingUsers, userData]));
-    
-    login(userData);
-    
-    console.log('Signup successful:', userData);
-    
-    if (userType === 'student') {
-      navigate('/UDashboard');
-    } else if (userType === 'company') {
-      navigate('/CompanyDashboard');
+    } else {
+      console.error("❌ Signup failed:", result.error);
+      alert(result.error || "Signup failed - please try again");
     }
-  };
-
+  } catch (err) {
+    console.error("❌ Signup network error:", err);
+    alert("Signup failed - please check your connection");
+  }
+};
   // Custom SVG Icons
   const StudentIcon = () => (
     <svg className="signup-tab-icon" viewBox="0 0 24 24">

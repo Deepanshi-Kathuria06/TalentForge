@@ -1,0 +1,48 @@
+.problem-description {
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.problem-description h1,
+.problem-description h2,
+.problem-description h3,
+.problem-description h4 {
+  color: var(--primary);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.problem-description p {
+  margin-bottom: 1em;
+}
+
+.problem-description code {
+  background: var(--gray-light);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  color: var(--primary);
+}
+
+.problem-description pre {
+  background: var(--gray-light);
+  padding: 15px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+.problem-description pre code {
+  background: none;
+  padding: 0;
+}
+
+.problem-description ul,
+.problem-description ol {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+.problem-description li {
+  margin-bottom: 0.5em;
+}

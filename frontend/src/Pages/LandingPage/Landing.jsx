@@ -4,7 +4,6 @@ import { Footer } from '../../components/Footer';
 import Navbar from '../../components/Navbar';
 import projectImage from '../../assets/images/ZeroWaste.png'; 
 
-
 export const Landing = () => {
   const [activeResumeTab, setActiveResumeTab] = useState('editor');
   const [name, setName] = useState('');
@@ -36,138 +35,137 @@ export const Landing = () => {
   }, [activeResumeTab]);
 
   return (
-    <div className="landing-container-1">
+    <div className="landing-container">
       <Navbar />
-        {/* New Hero Section with Globe Animation */}
-       {/* New Hero Section with Globe Animation */}
-<section className="globe-hero-section">
-  <div className="globe-container">
-    <div className="globe1">
-      <div className="globe-surface"></div>
-      <div className="globe-inner-glow"></div>
       
-      
-    </div>
-  </div>
-  
-  <div className="globe-hero-content">
-    <h1>
-      <span className="hero-title-line">Connecting Talent</span>
-      <span className="hero-title-line">Across the Globe</span>
-    </h1>
-    <p className="hero-subtitle">
-      This platform bridges the gap between <span className="highlight-text">top talent</span> and <span className="highlight-text">dream opportunities</span> in real-time, with the scale to power career transformations worldwide.
-    </p>
-    <div className="cta-buttons1">
-      <button className="primary-btn">Join the Network</button>
-      <button className="secondary-btn">See How It Works</button>
-    </div>
-  </div>
-</section>
-
-   {/* Elevate Your Journey - Circular Design */}
-<section className="journey-section">
-  <div className="section-container">
-    <h2 className="title">Elevate Your Career Journey</h2>
-    <p className="section-subtitle">Powerful tools designed to help you stand out in today's competitive market</p>
-    
-    <div className="circular-features">
-      <div className="central-circle">
-        <div className="center-content">
-          <h3>Your Career</h3>
-          <p>Success Starts Here</p>
-        </div>
-      </div>
-      
-      {[
-        { 
-          icon: (
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-              <path d="M8 7L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M8 12L16 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M8 17L13 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          ), 
-          title: 'ATS Optimizer', 
-          desc: 'Get past automated screening systems' 
-        },
-        { 
-          icon: (
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="2"/>
-              <path d="M8 8H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M8 16H12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          ), 
-          title: 'Resume Builder', 
-          desc: 'Create tailored resumes with AI' 
-        },
-        { 
-          icon: (
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-              <circle cx="9" cy="9" r="1" fill="currentColor"/>
-              <circle cx="15" cy="9" r="1" fill="currentColor"/>
-              <path d="M8 15H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M12 15V18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          ), 
-          title: 'Career Assistant', 
-          desc: '24/7 AI chatbot guidance' 
-        },
-        { 
-          icon: (
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-              <rect x="6" y="6" width="12" height="8" rx="1" stroke="currentColor" strokeWidth="2"/>
-              <path d="M8 17H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          ), 
-          title: 'Project Viewer', 
-          desc: 'Showcase work to recruiters' 
-        },
-        { 
-          icon: (
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-              <circle cx="9" cy="9" r="2" stroke="currentColor" strokeWidth="2"/>
-              <circle cx="15" cy="9" r="2" stroke="currentColor" strokeWidth="2"/>
-              <path d="M15 16C15 13.7909 13.2091 12 11 12C8.79086 12 7 13.7909 7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          ), 
-          title: 'Communities', 
-          desc: 'Connect with professionals' 
-        },
-        { 
-          icon: (
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
-              <path d="M7 17L7 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M12 17L12 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M17 17L17 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M7 12L17 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          ), 
-          title: 'Analytics', 
-          desc: 'Track job search performance' 
-        }
-      ].map((feature, index) => (
-        <div 
-          key={index} 
-          className={`feature-circle feature-${index + 1}`}
-        >
-          <div className="feature-content">
-            <div className="feature-icon">{feature.icon}</div>
-            <h4>{feature.title}</h4>
-            <p>{feature.desc}</p>
+      {/* Hero Section with Globe Animation */}
+      <section className="globe-hero-section">
+        <div className="globe-container">
+          <div className="globe">
+            <div className="globe-surface"></div>
+            <div className="globe-inner-glow"></div>
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>  
+        
+        <div className="globe-hero-content">
+          <h1>
+            <span className="hero-title-line">Connecting Talent</span>
+            <span className="hero-title-line">Across the Globe</span>
+          </h1>
+          <p className="hero-subtitle">
+            This platform bridges the gap between <span className="highlight-text">top talent</span> and <span className="highlight-text">dream opportunities</span> in real-time, with the scale to power career transformations worldwide.
+          </p>
+          <div className="cta-buttons">
+            <button className="primary-btn">Join the Network</button>
+            <button className="secondary-btn">See How It Works</button>
+          </div>
+        </div>
+      </section>
+
+      {/* Elevate Your Journey - Circular Design */}
+      <section className="journey-section">
+        <div className="section-container">
+          <h2 className="title">Elevate Your Career Journey</h2>
+          <p className="section-subtitle">Powerful tools designed to help you stand out in today's competitive market</p>
+          
+          <div className="circular-features">
+            <div className="central-circle">
+              <div className="center-content">
+                <h3>Your Career</h3>
+                <p>Success Starts Here</p>
+              </div>
+            </div>
+            
+            {[
+              { 
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                    <path d="M8 7L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M8 12L16 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M8 17L13 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                ), 
+                title: 'ATS Optimizer', 
+                desc: 'Get past automated screening systems' 
+              },
+              { 
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="2"/>
+                    <path d="M8 8H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M8 12H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M8 16H12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                ), 
+                title: 'Resume Builder', 
+                desc: 'Create tailored resumes with AI' 
+              },
+              { 
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                    <circle cx="9" cy="9" r="1" fill="currentColor"/>
+                    <circle cx="15" cy="9" r="1" fill="currentColor"/>
+                    <path d="M8 15H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M12 15V18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                ), 
+                title: 'Career Assistant', 
+                desc: '24/7 AI chatbot guidance' 
+              },
+              { 
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                    <rect x="6" y="6" width="12" height="8" rx="1" stroke="currentColor" strokeWidth="2"/>
+                    <path d="M8 17H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                ), 
+                title: 'Project Viewer', 
+                desc: 'Showcase work to recruiters' 
+              },
+              { 
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                    <circle cx="9" cy="9" r="2" stroke="currentColor" strokeWidth="2"/>
+                    <circle cx="15" cy="9" r="2" stroke="currentColor" strokeWidth="2"/>
+                    <path d="M15 16C15 13.7909 13.2091 12 11 12C8.79086 12 7 13.7909 7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                ), 
+                title: 'Communities', 
+                desc: 'Connect with professionals' 
+              },
+              { 
+                icon: (
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                    <path d="M7 17L7 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M12 17L12 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M17 17L17 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M7 12L17 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                ), 
+                title: 'Analytics', 
+                desc: 'Track job search performance' 
+              }
+            ].map((feature, index) => (
+              <div 
+                key={index} 
+                className={`feature-circle feature-${index + 1}`}
+              >
+                <div className="feature-content">
+                  <div className="feature-icon">{feature.icon}</div>
+                  <h4>{feature.title}</h4>
+                  <p>{feature.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>  
+      
       {/* Interactive Resume Viewer */}
       <section className="resume-viewer-section">
         <div className="section-container2">
@@ -317,6 +315,7 @@ export const Landing = () => {
           </div>
         </div>
       </section>
+      
       {/* Network Visualization */}
       <section className="network-visualization">
         <div className="section-container">
@@ -328,20 +327,25 @@ export const Landing = () => {
             </div>
             <div className="network-graphic">
               <div className="network-center">
-                <div className="network-core"></div>
-                <div className="network-core-glow"></div>
+                <div className="network-core">
+                  Your Career
+                </div>
               </div>
               {[
-                { text: 'Mentors', position: 'top: 0%; left: 50%' },
-                { text: 'Job Openings', position: 'top: 15%; left: 80%' },
-                { text: 'Skill Builders', position: 'top: 50%; left: 90%' },
-                { text: 'Industry Events', position: 'top: 85%; left: 80%' },
-                { text: 'Career Paths', position: 'top: 100%; left: 50%' },
-                { text: 'Learning Resources', position: 'top: 85%; left: 20%' },
-                { text: 'Peer Network', position: 'top: 50%; left: 10%' },
-                { text: 'Company Insights', position: 'top: 15%; left: 20%' }
+                { text: 'Salary Data' },
+                { text: 'Peer Network' },
+                { text: 'Mentors' },
+                { text: 'Freelance Gigs' },
+                { text: 'Job Openings' },
+                { text: 'Interview Prep' },
+                { text: 'Skill Builders' },
+                { text: 'Industry Events' },
+                { text: 'Career Paths' },
+                { text: 'Remote Work' },
+                { text: 'Learning Resources' },
+                { text: 'Company Insights' }
               ].map((node, i) => (
-                <div key={i} className="network-node" style={{ [node.position.split(':')[0]]: node.position.split(':')[1] }}>
+                <div key={i} className="network-node">
                   <div className="node-line"></div>
                   <div className="node-content">
                     {node.text}

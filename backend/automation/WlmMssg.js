@@ -1,4 +1,4 @@
-import fetch from "node-fetch"; // only if Node < 18
+import fetch from "node-fetch";
 
 export const sendToN8N = async (userData) => {
   try {

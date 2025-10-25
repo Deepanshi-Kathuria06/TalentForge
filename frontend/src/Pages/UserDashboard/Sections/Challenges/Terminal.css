@@ -1,0 +1,91 @@
+.terminal {
+  background: #1a1a1a;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  border-top: 1px solid var(--accent);
+}
+
+.terminal-header {
+  padding: 10px 20px;
+  background: #2d2d2d;
+  color: var(--white);
+  font-weight: bold;
+  border-bottom: 1px solid #444;
+}
+
+.terminal-content {
+  padding: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.test-case {
+  margin-bottom: 15px;
+  padding: 15px;
+  border-radius: 6px;
+  background: #2d2d2d;
+  border-left: 4px solid #444;
+}
+
+.test-case.passed {
+  border-left-color: #48bb78;
+}
+
+.test-case.failed {
+  border-left-color: #e53e3e;
+}
+
+.test-case-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.test-status.passed {
+  color: #48bb78;
+}
+
+.test-status.failed {
+  color: #e53e3e;
+}
+
+.test-details div {
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.test-details strong {
+  color: #fff;
+}
+
+.running-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent);
+  padding: 20px;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--accent);
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.no-tests {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

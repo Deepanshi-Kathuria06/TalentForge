@@ -44,6 +44,7 @@ body {
   background-color: var(--background);
 }
 
+
 .resume-builder-container {
   display: flex;
   flex-direction: column;
@@ -131,10 +132,10 @@ body {
 /* Template Selector */
 .template-selector {
   position: absolute;
-  top: 100%;
-  left: 50%;
+  top: 10%;
+  left: 75%;
   transform: translateX(-50%);
-  width: 90%;
+  width: 70%;
   max-width: 800px;
   background-color: var(--surface);
   border-radius: var(--border-radius-lg);
@@ -731,6 +732,8 @@ body {
   border-radius: var(--border-radius);
   transform-origin: top center;
   transition: var(--transition-slow);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* Resume Template Styles */
@@ -854,6 +857,81 @@ body {
   font-size: 0.95rem;
 }
 
+/* Editable field behavior to ensure wrapping and multiline support */
+.editable-field {
+  display: inline;
+  white-space: pre-wrap; /* preserve user newlines while wrapping */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.editable-field.editing {
+  display: block;
+  width: 100%;
+}
+
+.editable-field.empty {
+  color: var(--text-lighter);
+}
+
+/* Inputs for inline edit states */
+input.editable-field.editing,
+textarea.editable-field.editing {
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius-sm);
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  color: inherit;
+  background-color: var(--surface);
+}
+
+/* Ensure long contact lines wrap instead of overflowing */
+.resume .contact-info,
+.resume .contact {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* Sidebar collapse styles */
+.sidebar-container1.collapsed {
+  width: 60px;
+}
+
+.sidebar-container1.collapsed .tab-text,
+.sidebar-container1.collapsed .sidebar1,
+.sidebar-container1.collapsed .sidebar-footer {
+  display: none;
+}
+
+.sidebar-collapse-toggle {
+  position: absolute;
+  left: 500px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-container1.collapsed + .preview .preview-header { /* no layout shift needed */ }
+
+.sidebar-container1.collapsed ~ .preview .preview-content {
+  padding-left: 2rem;
+}
+
+/* Adjust toggle position when collapsed */
+.sidebar-container1.collapsed .sidebar-collapse-toggle {
+  left: 60px;
+}
+
 /* Template-specific styles */
 .template-professional .section-title-resume {
   border-bottom-color: var(--primary);
@@ -924,22 +1002,54 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .sidebar-container {
-    height: 50vh;
+  /* Mobile layout - stack sidebar and preview vertically */
+  .content1 {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .sidebar-container1 {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  
+  .sidebar-container1.collapsed {
+    width: 100%;
+    height: auto;
   }
   
   .preview {
-    height: 50vh;
+    width: 100%;
+    height: auto;
+    min-height: 400px;
+    padding: 1rem;
+  }
+  
+  .resume {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 1.5rem;
+    transform: none;
+    box-shadow: none;
+    border: 1px solid var(--border);
   }
   
   .tab-navigation {
     padding: 0.25rem;
     gap: 0.125rem;
+    overflow-x: auto;
+    flex-wrap: nowrap;
   }
   
   .tab-button {
-    padding: 0.75rem 0.25rem;
-    min-width: 70px;
+    padding: 0.75rem 0.5rem;
+    min-width: 80px;
+    font-size: 0.8rem;
+    white-space: nowrap;
   }
   
   .tab-content-wrapper {
@@ -948,7 +1058,7 @@ body {
   
   .input-row {
     flex-direction: column;
-    gap: 0;
+    gap: 1rem;
   }
   
   .skill-inputs {
@@ -969,6 +1079,51 @@ body {
   
   .date-range {
     margin-top: 0.25rem;
+  }
+  
+  /* Hide sidebar collapse toggle on mobile */
+  .sidebar-collapse-toggle {
+    display: none;
+  }
+  
+  /* Mobile form improvements */
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-control {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Mobile resume preview improvements */
+  .resume-name {
+    font-size: 1.8rem;
+  }
+  
+  .resume-title {
+    font-size: 1.2rem;
+  }
+  
+  .section-title {
+    font-size: 1.1rem;
+  }
+  
+  .experience-item h3 {
+    font-size: 1rem;
+  }
+  
+  .experience-item h4 {
+    font-size: 0.9rem;
+  }
+  
+  .experience-item p {
+    font-size: 0.85rem;
   }
 }
 
@@ -1039,4 +1194,5 @@ body {
   @page {
     margin: 0;
   }
+  
 }

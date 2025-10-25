@@ -1,0 +1,264 @@
+// components/JobForm.js
+import React, { useState } from "react";
+import API from '../../utils/api';
+
+const JobForm = ({ onSuccess, user }) => {
+  const [jobData, setJobData] = useState({
+    title: "",
+    location: "",
+    type: "Full-time",
+    salaryRange: "",
+    description: "",
+    requirements: "",
+    category: "Engineering",
+    skills: "",
+    duration: ""
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setJobData({ ...jobData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      console.log("🚀 Starting job submission...");
+      console.log("User data:", user);
+      
+      if (!user || !user._id) {
+        alert("User not found. Please log in again.");
+        setLoading(false);
+        return;
+      }
+
+      // Prepare job data for backend
+      const jobWithCompany = {
+        ...jobData,
+        company: user._id,
+        companyName: user.name || user.companyName || "Your Company"
+      };
+
+      console.log("📦 Job data to send:", jobWithCompany);
+
+      // ✅ IMPORTANT: Test the exact endpoint first
+      console.log("🔍 Testing endpoint: POST http://localhost:5000/api/jobs");
+      
+      // POST to backend
+      const response = await API.post('/jobs', jobWithCompany);
+      
+      console.log("✅ Backend response received:", response.data);
+      
+      if (response.data.success) {
+        alert("🎉 Job posted successfully! Saved to MongoDB database.");
+        
+        // Pass the saved job back to CompanyDashboard
+        onSuccess(response.data.job);
+        
+        // Reset form
+        setJobData({
+          title: "", location: "", type: "Full-time", salaryRange: "",
+          description: "", requirements: "", category: "Engineering",
+          duration: "", skills: ""
+        });
+      } else {
+        alert("❌ " + (response.data.error || "Failed to post job"));
+      }
+    } catch (error) {
+      console.error("💥 Job posting error:", error);
+      
+      if (error.response) {
+        console.error("📡 Server responded with error:");
+        console.error("Status:", error.response.status);
+        console.error("Data:", error.response.data);
+        console.error("Headers:", error.response.headers);
+        
+        if (error.response.status === 404) {
+          alert("❌ Backend endpoint not found. Check if server is running on http://localhost:5000");
+        } else if (error.response.status === 500) {
+          alert("❌ Server error: " + (error.response.data?.error || "Internal server error"));
+        } else {
+          alert("❌ Error: " + (error.response.data?.error || "Unknown server error"));
+        }
+      } else if (error.request) {
+        console.error("🌐 No response received:", error.request);
+        alert("❌ Cannot connect to server. Make sure backend is running on http://localhost:5000");
+      } else {
+        console.error("⚡ Request setup error:", error.message);
+        alert("❌ Unexpected error: " + error.message);
+      }
+      
+      // Fallback: Create local job for CompanyDashboard display
+      console.log("📝 Creating local job as fallback");
+      const mockJob = {
+        _id: Date.now().toString(),
+        ...jobData,
+        company: user._id,
+        companyName: user.name || user.companyName || "Your Company",
+        createdAt: new Date().toISOString(),
+        applicationCount: 0
+      };
+      
+      // Save to localStorage for UserDashboard
+      try {
+        const existingJobs = JSON.parse(localStorage.getItem('demoJobs') || '[]');
+        existingJobs.unshift(mockJob);
+        localStorage.setItem('demoJobs', JSON.stringify(existingJobs));
+        console.log("💾 Job saved to localStorage for UserDashboard");
+      } catch (storageError) {
+        console.error("Failed to save to localStorage:", storageError);
+      }
+      
+      onSuccess(mockJob);
+      alert("📋 Job saved locally (Backend not available). Students will see this job.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form className="job-form" onSubmit={handleSubmit}>
+      <div className="form-row">
+        <div className="form-group">
+          <label>Job Title *</label>
+          <input 
+            type="text" 
+            name="title" 
+            placeholder="e.g., Frontend Developer" 
+            value={jobData.title} 
+            onChange={handleChange} 
+            required 
+            disabled={loading}
+          />
+        </div>
+        
+        <div className="form-group">
+          <label>Location *</label>
+          <input 
+            type="text" 
+            name="location" 
+            placeholder="e.g., Remote, New York" 
+            value={jobData.location} 
+            onChange={handleChange} 
+            required 
+            disabled={loading}
+          />
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Job Type *</label>
+          <select name="type" value={jobData.type} onChange={handleChange} disabled={loading}>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Internship">Internship</option>
+            <option value="Contract">Contract</option>
+            <option value="Remote">Remote</option>
+          </select>
+        </div>
+        
+        <div className="form-group">
+          <label>Category</label>
+          <select name="category" value={jobData.category} onChange={handleChange} disabled={loading}>
+            <option value="Engineering">Engineering</option>
+            <option value="Design">Design</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Sales">Sales</option>
+            <option value="Business">Business</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Salary Range</label>
+          <input 
+            type="text" 
+            name="salaryRange" 
+            placeholder="e.g., $50,000 - $70,000" 
+            value={jobData.salaryRange} 
+            onChange={handleChange} 
+            disabled={loading}
+          />
+        </div>
+        
+        <div className="form-group">
+          <label>Duration (for internships)</label>
+          <input 
+            type="text" 
+            name="duration" 
+            placeholder="e.g., 3 months, 6 months" 
+            value={jobData.duration} 
+            onChange={handleChange} 
+            disabled={loading}
+          />
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label>Required Skills</label>
+        <input 
+          type="text" 
+          name="skills" 
+          placeholder="e.g., React, JavaScript, Node.js" 
+          value={jobData.skills} 
+          onChange={handleChange} 
+          disabled={loading}
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Job Description *</label>
+        <textarea 
+          name="description" 
+          placeholder="Describe the role, responsibilities, and what you're looking for..." 
+          value={jobData.description} 
+          onChange={handleChange} 
+          rows="5"
+          required
+          disabled={loading}
+        ></textarea>
+      </div>
+
+      <div className="form-group">
+        <label>Requirements</label>
+        <textarea 
+          name="requirements" 
+          placeholder="List the requirements and qualifications needed..." 
+          value={jobData.requirements} 
+          onChange={handleChange} 
+          rows="4"
+          disabled={loading}
+        ></textarea>
+      </div>
+
+      <button 
+        type="submit" 
+        className="primary-btn" 
+        disabled={loading}
+        style={{ opacity: loading ? 0.6 : 1 }}
+      >
+        {loading ? 'Posting Job...' : 'Post Job'}
+      </button>
+
+      <div style={{ 
+        marginTop: '15px', 
+        padding: '10px', 
+        background: '#e9f7fe', 
+        borderRadius: '5px',
+        border: '1px solid #b3e0ff'
+      }}>
+        <small style={{ color: '#0066cc' }}>
+          <strong>Debug Info:</strong> This will try to save to MongoDB at http://localhost:5000/api/jobs
+        </small>
+      </div>
+    </form>
+  );
+};
+
+export default JobForm;

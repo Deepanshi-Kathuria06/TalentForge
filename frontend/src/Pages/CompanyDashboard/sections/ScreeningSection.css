@@ -1,0 +1,376 @@
+/* ScreeningSection.css */
+.screening-section {
+  padding: 20px 0;
+}
+
+.screening-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.screening-header h4 {
+  margin: 0;
+  color: #333;
+  font-size: 1.25rem;
+}
+
+.status-filters {
+  display: flex;
+  gap: 16px;
+}
+
+.status-filter {
+  padding: 8px 16px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-filter:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.status-filter.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.applications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.application-item {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.application-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-color: #007bff;
+}
+
+.application-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.applicant-info {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+}
+
+.applicant-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e0e0e0;
+}
+
+.applicant-info > div {
+  flex: 1;
+}
+
+.applicant-info h5 {
+  margin: 0 0 4px 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.applicant-info p {
+  margin: 2px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.application-date {
+  font-size: 12px !important;
+  color: #999 !important;
+  margin-top: 8px !important;
+}
+
+.status-indicator {
+  font-size: 12px !important;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 8px !important;
+}
+
+.status-indicator.viewed {
+  background: #e7f3ff;
+  color: #0066cc;
+  border: 1px solid #b3d9ff;
+}
+
+.status-indicator.downloaded {
+  background: #f0fff0;
+  color: #00a86b;
+  border: 1px solid #b3ffb3;
+}
+
+.application-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 200px;
+}
+
+.btn-view, .btn-download {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-view {
+  background: #007bff;
+  color: white;
+}
+
+.btn-view:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.btn-download {
+  background: #28a745;
+  color: white;
+}
+
+.btn-download:hover {
+  background: #1e7e34;
+  transform: translateY(-1px);
+}
+
+.status-select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.status-select option {
+  padding: 8px;
+}
+
+/* Status-specific styles */
+.application-item[data-status="pending"] {
+  border-left: 4px solid #ffc107;
+}
+
+.application-item[data-status="reviewed"] {
+  border-left: 4px solid #17a2b8;
+}
+
+.application-item[data-status="accepted"] {
+  border-left: 4px solid #28a745;
+}
+
+.application-item[data-status="rejected"] {
+  border-left: 4px solid #dc3545;
+}
+
+/* Application Details Modal */
+.application-details {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.details-header h5 {
+  margin: 0;
+  color: #333;
+}
+
+.details-header button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.details-header button:hover {
+  background: #e9ecef;
+  color: #333;
+}
+
+.details-content {
+  color: #555;
+}
+
+.details-content p {
+  margin: 8px 0;
+}
+
+.cover-letter {
+  background: white;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  margin-top: 8px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Empty state */
+.applications-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.applications-empty .empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.applications-empty h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.applications-empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Loading state */
+.applications-loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .screening-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  
+  .status-filters {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .application-main {
+    flex-direction: column;
+  }
+  
+  .application-actions {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .applicant-info {
+    width: 100%;
+  }
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-left: 8px;
+}
+
+.status-badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.reviewed {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-badge.accepted {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.rejected {
+  background: #f8d7da;
+  color: #721c24;
+}
