@@ -11,7 +11,7 @@ import ATS from "./Pages/ATS CHECKER/ATS";
 import Resume from "./Pages/ResumeBuilder/resumeEditor";
 import Starting from "./Pages/ResumeBuilder/starting";
 import CompanyDashboard from "./Pages/CompanyDashboard/CompanyDashboard.jsx";
-import Udashboard from "./Pages/UserDashboard/Udashboard";
+import Udashboard from "./Pages/UserDashboard/Udashboard.jsx"
 import Dashboard from "./Pages/UserDashboard/Dashboard";
 import SavedDesign from "./Pages/ResumeBuilder/saveddesign";
 import Challenges from "./Pages/UserDashboard/Sections/Challenges/Challenges.jsx";

@@ -47,13 +47,7 @@ const Dashboard = ({ onLogout, user }) => {
             <p>Track your job/internship applications...</p>
           </div>
         );
-      case "gamify":
-        return (
-          <div className="gamify-section">
-            <h2>Gamification</h2>
-            <p>Earn badges, rewards and climb leaderboards!</p>
-          </div>
-        );
+     
       case "network":
         return (
           <div className="network-section">
@@ -108,7 +102,6 @@ const Dashboard = ({ onLogout, user }) => {
           <li onClick={() => setActivePage("resume")}>📄 Resume Tools</li>
           <li onClick={() => setActivePage("projects")}>📂 Projects</li>
           <li onClick={() => setActivePage("apps")}>💼 Applications</li>
-          <li onClick={() => setActivePage("gamify")}>🏆 Gamify</li>
           <li onClick={() => setActivePage("network")}>🤝 Network</li>
           <li onClick={() => setActivePage("saved")}>⭐ Saved</li>
           <li onClick={() => setActivePage("challenges")}>🧑‍💻 Challenges</li>

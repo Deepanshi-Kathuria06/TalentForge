@@ -307,6 +307,131 @@ body {
 
   .nav-actions {
     gap: 0.5rem;
+<<<<<<< HEAD
+  }
+
+  .login-btn,
+  .signup-btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .navbar-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: auto;
+    width: auto;
+    height: auto;
+    flex-direction: row;
+    border-radius: 50px;
+    background: rgba(255, 249, 229, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--border);
+    padding: 15px 25px;
+    margin: 0;
+    max-width: calc(100% - 40px);
+  }
+
+  .navbar {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0;
+  }
+
+  .nav-links {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0;
+  }
+
+  .nav-icon {
+    width: 55px;
+    height: 55px;
+    padding: 14px;
+  }
+
+  .dropdown-with-images-vertical {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: auto;
+    width: 90%;
+    max-width: 320px;
+    margin-left: 0;
+  }
+
+  .dropdown-item {
+    padding: 0.8rem;
+  }
+
+  .dropdown-content h5 {
+    font-size: 1.1rem;
+  }
+
+  .main-content {
+    margin-left: 0;
+    margin-bottom: 120px;
+  }
+}
+
+/* Small screen adjustments */
+@media (max-width: 480px) {
+  .top-navbar {
+    padding: 0 0.8rem;
+  }
+
+  .logo-name {
+    font-size: 1rem;
+  }
+
+  .nav-logo {
+    padding: 5px;
+  }
+
+  .nav-actions {
+    gap: 0.3rem;
+  }
+
+  .login-btn,
+  .signup-btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .navbar-container {
+    padding: 12px 20px;
+    bottom: 15px;
+  }
+
+  .nav-icon {
+    width: 50px;
+    height: 50px;
+    padding: 12px;
+  }
+
+  .dropdown-with-images-vertical {
+    width: 95%;
+    padding: 1rem;
+    bottom: 90px;
+  }
+  
+  .dropdown-item {
+    gap: 0.5rem;
+  }
+  
+  .dropdown-content h5 {
+    font-size: 1rem;
+  }
+  
+  .dropdown-content p {
+    font-size: 0.8rem;
+=======
+>>>>>>> 0e22585c35c45c2a04c9088d885a31745f628fb6
   }
 
   .login-btn,
@@ -430,4 +555,5 @@ body {
   .dropdown-content p {
     font-size: 0.8rem;
   }
+}
 }
