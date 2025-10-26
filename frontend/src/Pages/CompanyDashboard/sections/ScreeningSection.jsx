@@ -1,161 +1,286 @@
 // components/ScreeningSection.jsx
-import React, { useState, useEffect } from 'react';
-import API from '../../../utils/api';
-import './ScreeningSection.css';
+import React, { useState, useEffect, useContext } from "react";
+import API from "../../../utils/api";
+import "./ScreeningSection.css";
+import { useAuth } from '../../Auth/AuthContext';
 
-const ScreeningSection = ({ user }) => {
+const ScreeningSection = () => {
+    const { user } = useAuth();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedApplication, setSelectedApplication] = useState(null);
 
+
+  // 🔹 Fetch applications when user (company) is loaded
   useEffect(() => {
-    fetchApplications();
+    if (user && (user._id || user.id)) {
+      fetchApplications();
+    }
   }, [user]);
 
+  // ✅ Fetch all applications for logged-in company
   const fetchApplications = async () => {
     try {
-      const response = await API.get(`/applications/company/${user._id}`);
-      setApplications(response.data);
+      setLoading(true);
+      const companyId = user?._id || user?.id; // ✅ fix: defined companyId properly
+
+      if (!companyId) {
+        console.error("⚠️ No company ID found");
+        setLoading(false);
+        return;
+      }
+
+      console.log("📡 Fetching applications for company:", companyId);
+
+      const res = await API.get(`/applications/company/${companyId}`);
+      console.log("✅ Applications fetched:", res.data);
+
+      // ✅ Ensure correct structure
+      const apps = Array.isArray(res.data)
+        ? res.data
+        : res.data.applications || [];
+
+      setApplications(apps);
     } catch (error) {
-      console.error('Error fetching applications:', error);
+      console.error("❌ Failed to fetch applications:", error);
+      setApplications([]); // fallback empty
     } finally {
       setLoading(false);
     }
   };
 
-  const updateStatus = async (applicationId, status) => {
+  // ✅ Update application status
+  const updateApplicationStatus = async (applicationId, status) => {
     try {
+      console.log("📝 Updating status:", applicationId, status);
+
+      setApplications((prev) =>
+        prev.map((app) =>
+          app._id === applicationId ? { ...app, status } : app
+        )
+      );
+
       await API.put(`/applications/${applicationId}/status`, { status });
-      setApplications(prev => prev.map(app => 
-        app._id === applicationId ? { ...app, status } : app
-      ));
-      alert(`Application ${status}`);
+      console.log("✅ Status updated in backend");
+
+      alert(`✅ Application marked as ${status}!`);
     } catch (error) {
-      console.error('Error updating status:', error);
+      console.error("❌ Error updating status:", error);
+      alert("Failed to update status. Please try again.");
     }
   };
 
-  const trackAction = async (applicationId, action) => {
+  // ✅ Track actions like "viewed" or "downloaded"
+  const trackApplicationAction = async (applicationId, action) => {
     try {
-      await API.put(`/applications/${applicationId}/track`, { 
+      console.log(`📊 Tracking ${action} for application:`, applicationId);
+
+      const updateData = {
+        [`${action}At`]: new Date().toISOString(),
+        [`${action}By`]: user?._id,
+      };
+
+      setApplications((prev) =>
+        prev.map((app) =>
+          app._id === applicationId ? { ...app, ...updateData } : app
+        )
+      );
+
+      await API.put(`/applications/${applicationId}/track`, {
         action,
-        companyId: user._id 
+        companyId: user?._id,
       });
-      
-      // Update local state
-      setApplications(prev => prev.map(app => 
-        app._id === applicationId ? { 
-          ...app, 
-          [`${action}At`]: new Date(),
-          [`${action}By`]: user._id 
-        } : app
-      ));
+
+      console.log(`✅ ${action} tracked in backend`);
+      if (action === "downloaded") alert("📥 Resume downloaded successfully!");
     } catch (error) {
-      console.error('Error tracking action:', error);
+      console.error(`❌ Error tracking ${action}:`, error);
     }
   };
 
-  if (loading) return <div>Loading applications...</div>;
+  // ✅ Simulate resume download
+  const downloadResume = (application) => {
+    trackApplicationAction(application._id, "downloaded");
+
+    const blob = new Blob([`Resume for ${application.userName}`], {
+      type: "application/pdf",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `resume-${application.userName}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // ✅ Loading state
+  if (loading) {
+    return (
+      <div className="applications-loading">
+        <div className="loading-spinner"></div>
+        <p>Loading applications...</p>
+      </div>
+    );
+  }
 
   return (
-    
     <div className="screening-section">
       <div className="screening-header">
-        <h4>Total Applications: {applications.length}</h4>
-        <div className="status-filters">
-          <span className={`status-filter ${!selectedApplication ? 'active' : ''}`}>
-            All ({applications.length})
-          </span>
-          <span className="status-filter">
-            Pending ({applications.filter(app => app.status === 'pending').length})
-          </span>
-          <span className="status-filter">
-            Reviewed ({applications.filter(app => app.status === 'reviewed').length})
-          </span>
+        <h3>Job Applications ({applications.length})</h3>
+        <button
+          className="refresh-btn"
+          onClick={fetchApplications}
+          disabled={loading}
+        >
+          {loading ? "Refreshing..." : "Refresh"}
+        </button>
+      </div>
+
+      {applications.length === 0 ? (
+        <div className="applications-empty">
+          <div className="empty-icon">📝</div>
+          <h4>No Applications Yet</h4>
+          <p>Applications from candidates will appear here</p>
         </div>
-      </div>
+      ) : (
+        <div className="applications-list">
+          {applications.map((application) => (
+            <div
+              key={application._id}
+              className="application-item"
+              data-status={application.status}
+            >
+              <div className="application-main">
+                <div className="applicant-info">
+                  <img
+                    src={
+                      application.user?.avatar ||
+                      "https://randomuser.me/api/portraits/men/32.jpg"
+                    }
+                    alt={application.userName}
+                    className="applicant-avatar"
+                  />
+                  <div className="applicant-details">
+                    <div className="applicant-header">
+                      <h4>{application.userName}</h4>
+                      <span className={`status-badge ${application.status}`}>
+                        {application.status}
+                      </span>
+                    </div>
+                    <p className="applicant-email">{application.userEmail}</p>
+                    <p className="job-applied">
+                      Applied for: <strong>{application.job?.title}</strong>
+                    </p>
+                    <p className="application-date">
+                      Applied:{" "}
+                      {new Date(application.appliedAt).toLocaleDateString()}
+                    </p>
 
-      <div className="applications-list">
-        {applications.map(application => (
-          <div key={application._id} className="application-item">
-            <div className="application-main">
-              <div className="applicant-info">
-                <img 
-                  src={application.user?.avatar || "https://randomuser.me/api/portraits/men/32.jpg"} 
-                  alt={application.userName}
-                  className="applicant-avatar"
-                />
-                <div>
-                  <h5>{application.userName}</h5>
-                  <p>{application.userEmail}</p>
-                  <p>Applied for: <strong>{application.job?.title}</strong></p>
-                  <p className="application-date">
-                    Applied: {new Date(application.appliedAt).toLocaleDateString()}
-                  </p>
-                  
-                  {/* Status indicators */}
-                  {application.viewedAt && (
-                    <p className="status-indicator viewed">
-                      ✅ Viewed by company
-                    </p>
-                  )}
-                  {application.downloadedAt && (
-                    <p className="status-indicator downloaded">
-                      📥 Resume downloaded
-                    </p>
-                  )}
+                    {/* Status indicators */}
+                    <div className="status-indicators">
+                      {application.viewedAt && (
+                        <span className="status-indicator viewed">
+                          ✅ Viewed on{" "}
+                          {new Date(
+                            application.viewedAt
+                          ).toLocaleDateString()}
+                        </span>
+                      )}
+                      {application.downloadedAt && (
+                        <span className="status-indicator downloaded">
+                          📥 Resume downloaded on{" "}
+                          {new Date(
+                            application.downloadedAt
+                          ).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="application-actions">
+                  <button
+                    className="btn-view"
+                    onClick={() => {
+                      setSelectedApplication(
+                        selectedApplication?._id === application._id
+                          ? null
+                          : application
+                      );
+                      trackApplicationAction(application._id, "viewed");
+                    }}
+                  >
+                    {selectedApplication?._id === application._id
+                      ? "Hide Details"
+                      : "View Details"}
+                  </button>
+
+                  <button
+                    className="btn-download"
+                    onClick={() => downloadResume(application)}
+                  >
+                    Download Resume
+                  </button>
+
+                  <select
+                    value={application.status}
+                    onChange={(e) =>
+                      updateApplicationStatus(application._id, e.target.value)
+                    }
+                    className="status-select"
+                  >
+                    <option value="pending">⏳ Pending</option>
+                    <option value="reviewed">👀 Reviewed</option>
+                    <option value="accepted">✅ Accepted</option>
+                    <option value="rejected">❌ Rejected</option>
+                  </select>
                 </div>
               </div>
 
-              <div className="application-actions">
-                <button 
-                  className="btn-view"
-                  onClick={() => {
-                    setSelectedApplication(application);
-                    trackAction(application._id, 'viewed');
-                  }}
-                >
-                  View Details
-                </button>
-                <button 
-                  className="btn-download"
-                  onClick={() => trackAction(application._id, 'downloaded')}
-                >
-                  Download Resume
-                </button>
-                
-                <select 
-                  value={application.status}
-                  onChange={(e) => updateStatus(application._id, e.target.value)}
-                  className="status-select"
-                >
-                  <option value="pending">Pending</option>
-                  <option value="reviewed">Reviewed</option>
-                  <option value="accepted">Accepted</option>
-                  <option value="rejected">Rejected</option>
-                </select>
-              </div>
+              {/* Application details */}
+              {selectedApplication &&
+                selectedApplication._id === application._id && (
+                  <div className="application-details">
+                    <div className="details-header">
+                      <h5>Application Details</h5>
+                      <button onClick={() => setSelectedApplication(null)}>
+                        ×
+                      </button>
+                    </div>
+                    <div className="details-content">
+                      <div className="detail-row">
+                        <strong>Phone:</strong>{" "}
+                        {application.phone || "Not provided"}
+                      </div>
+                      <div className="detail-row">
+                        <strong>Portfolio:</strong>{" "}
+                        {application.portfolio ? (
+                          <a
+                            href={application.portfolio}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {application.portfolio}
+                          </a>
+                        ) : (
+                          "Not provided"
+                        )}
+                      </div>
+                      <div className="detail-row">
+                        <strong>Cover Letter:</strong>
+                      </div>
+                      <div className="cover-letter">
+                        {application.coverLetter}
+                      </div>
+                    </div>
+                  </div>
+                )}
             </div>
-
-            {/* Application details modal */}
-            {selectedApplication && selectedApplication._id === application._id && (
-              <div className="application-details">
-                <div className="details-header">
-                  <h5>Application Details</h5>
-                  <button onClick={() => setSelectedApplication(null)}>×</button>
-                </div>
-                <div className="details-content">
-                  <p><strong>Phone:</strong> {application.phone}</p>
-                  <p><strong>Portfolio:</strong> {application.portfolio}</p>
-                  <p><strong>Cover Letter:</strong></p>
-                  <div className="cover-letter">{application.coverLetter}</div>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-        
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

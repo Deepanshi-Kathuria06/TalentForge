@@ -194,6 +194,12 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
 
   // ✅ Apply for job function
   const handleApply = (job) => {
+  console.log("Applying for job:", job);
+  if (!job || !job._id) {
+    console.error("Invalid job data:", job);
+    alert("Invalid job information. Please try again.");
+    return;
+  }
   setSelectedJob(job);
   setIsApplicationModalOpen(true);
 };
@@ -1021,13 +1027,17 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
       onSubmit={handleCreatePost}
     />
 
-    <ApplicationModal
+   <ApplicationModal
   job={selectedJob}
   isOpen={isApplicationModalOpen}
-  onClose={() => setIsApplicationModalOpen(false)}
+  onClose={() => {
+    setIsApplicationModalOpen(false);
+    setSelectedJob(null); // ✅ Clear the job when closing
+  }}
   onSuccess={(application) => {
-    console.log("Application submitted:", application);
-    // You can update UI here if needed
+    console.log("Application submitted successfully:", application);
+    alert("Application submitted successfully!");
+    // You can refresh the jobs list or show a success message
   }}
 />
     </div>

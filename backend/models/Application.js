@@ -9,26 +9,14 @@ const applicationSchema = new mongoose.Schema({
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", 
+    ref: "User",
     required: true
   },
-  userName: {
-    type: String,
-    required: true
-  },
-  userEmail: {
-    type: String,
-    required: true
-  },
-  phone: {
-    type: String,
-    required: true
-  },
+  userName: String,
+  userEmail: String,
+  phone: String,
   portfolio: String,
-  coverLetter: {
-    type: String,
-    required: true
-  },
+  coverLetter: String,
   resume: {
     filename: String,
     originalName: String,
@@ -37,14 +25,8 @@ const applicationSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["pending", "reviewed", "accepted", "rejected"],
-    default: "pending"
-  },
-  appliedAt: {
-    type: Date,
-    default: Date.now
+    default: "Pending"
   }
-});
+}, { timestamps: true });
 
-const Application = mongoose.model("Application", applicationSchema);
-export default Application;
+export default mongoose.model("Application", applicationSchema);
