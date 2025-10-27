@@ -35,6 +35,7 @@ body {
   background: var(--background);
   color: var(--text);
   line-height: 1.6;
+  overflow-x: hidden; /* Prevent horizontal scroll on body */
 }
 
 .projects-page {
@@ -42,9 +43,9 @@ body {
   background: var(--background);
   padding: 0;
   animation: fadeIn 0.8s ease-in-out;
-  width: 100vw;
+  width: 100%;
   margin: 0;
-  overflow-x: hidden;
+  overflow-x: hidden; /* Ensure no horizontal scroll */
 }
 
 /* Header Section */
@@ -145,7 +146,7 @@ body {
   transform: rotate(90deg);
 }
 
-/* Controls Section */
+/* Controls Section - FIXED */
 .projects-controls {
   background: var(--white);
   padding: 30px 0;
@@ -156,7 +157,7 @@ body {
   gap: 30px;
   flex-wrap: wrap;
   animation: slideInFromTop 0.6s ease-out 0.2s both;
-  width: 1720px;
+  max-width: 1200px; /* Changed from fixed width to max-width */
   margin: 0 auto;
   padding-left: 40px;
   padding-right: 40px;
@@ -164,6 +165,8 @@ body {
   margin-top: 4px;
   position: relative;
   z-index: 10;
+  width: 100%; /* Ensure it doesn't exceed container */
+  box-sizing: border-box;
 }
 
 .search-section {
@@ -247,18 +250,19 @@ body {
   transform: translateY(-2px);
 }
 
-/* Projects Grid - Reduced height */
+/* Projects Grid */
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 30px;
   padding: 40px;
-  max-width: 1400px; /* Increased max-width to accommodate 3 columns */
+  max-width: 1400px;
   margin: 0 auto;
   width: 100%;
   animation: fadeIn 0.8s ease-out 0.3s both;
   box-sizing: border-box;
 }
+
 .project-card {
   background: var(--white);
   border-radius: var(--border-radius);
@@ -274,8 +278,9 @@ body {
   max-height: 500px;
   display: flex;
   flex-direction: column;
-  width: 100%; /* Ensure cards take full width of grid cell */
+  width: 100%;
 }
+
 .project-card:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow: var(--box-shadow-hover);
@@ -284,7 +289,7 @@ body {
 
 .project-cover {
   position: relative;
-  height: 160px; /* Reduced height */
+  height: 160px;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -1146,15 +1151,16 @@ body {
   }
 
   .projects-page {
-  min-height: 100vh;
-  background: var(--background);
-  padding: 0;
-  animation: fadeIn 0.8s ease-in-out;
-  width: 100%;
-  margin: 0;
-  overflow-x: hidden;
-  box-sizing: border-box;
-}
+    min-height: 100vh;
+    background: var(--background);
+    padding: 0;
+    animation: fadeIn 0.8s ease-in-out;
+    width: 100%;
+    margin: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+  
   .project-card {
     break-inside: avoid;
     box-shadow: none;

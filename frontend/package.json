@@ -16,6 +16,7 @@
     "@mui/material": "^7.3.1",
     "@mui/styles": "^6.5.0",
     "@react-oauth/google": "^0.12.2",
+    "bytez.js": "^1.1.16",
     "draft-js": "^0.11.7",
     "file-saver": "^2.0.5",
     "html-to-image": "^1.11.13",

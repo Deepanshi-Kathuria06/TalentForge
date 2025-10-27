@@ -10,6 +10,9 @@ import Settings from "../UserDashboard/Sections/Settings";
 import Projects from "../UserDashboard/Sections/Projects";
 import Jobs from '../UserDashboard/Sections/Jobs';
 import ApplicationModal from '../../components/jobs/ApplicationModal';
+import Resume from '../ResumeBuilder/Starting';
+import Challenge from './Sections/Challenges/ChallengeWelcome';
+import ChallengesStart from './Sections/Challenges/ChallengeStart';
 
 
 const UDashboard = () => {
@@ -459,11 +462,13 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
               <div
                 className={`menu-item ${activePage === item.page ? "active" : ""}`}
                 onClick={() => {
-                  if (item.page === "resume") {
-                    window.location.href = "/ResumeBuilder/resumeEditor";
-                  } else {
-                    setActivePage(item.page);
-                  }
+               if (item.page === "resume") {
+  window.location.href = "http://localhost:5178/starting";
+} else {
+  setActivePage(item.page);
+}
+
+
                 }}
                 title={!sidebarExpanded ? item.text : ""}
               >
@@ -631,42 +636,8 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
             </div>
           </div>
         );
-      case 'resume':
-        return (
-          <div className="page-content">
-            <div className="page-header">
-              <h2>Resume Builder</h2>
-              <p>Create and manage your professional resume</p>
-            </div>
-            <div className="card">
-              <h3>Your Resume</h3>
-              <div className="resume-preview">
-                <div className="resume-header">
-                  <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" className="resume-profile-img" />
-                  <div>
-                    <h2>{user?.name || 'Student'}</h2>
-                    <p>{getUserRole()}</p>
-                  </div>
-                </div>
-                <div className="resume-section">
-                  <h4>Experience</h4>
-                  <div className="resume-item">
-                    <h5>Senior Developer at TechCorp</h5>
-                    <p>Jan 2020 - Present</p>
-                    <p>Developed and maintained web applications using React and Node.js</p>
-                  </div>
-                  <div className="resume-item">
-                    <h5>Junior Developer at StartupCo</h5>
-                    <p>Jun 2018 - Dec 2019</p>
-                    <p>Assisted in building responsive web interfaces and backend APIs</p>
-                  </div>
-                </div>
-              </div>
-              <button className="primary-btn">Edit Resume</button>
-              <button className="secondary-btn">Download PDF</button>
-            </div>
-          </div>
-        );
+      
+         
       case 'projects':
         return (
           <div className="page-content">
@@ -675,8 +646,15 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
         );
       case 'jobs':
         return <JobsSection />;
+
+      case 'Resume':
+        return <starting />;
       case "settings":
         return <Settings />;
+
+      case "challenges":
+        return <ChallengesStart/>;
+
       case 'dashboard':
       default:
         return (

@@ -10,6 +10,7 @@ const ProblemSolve = () => {
   const { problemId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+
   const [problem, setProblem] = useState(null);
   const [code, setCode] = useState('');
   const [activeTab, setActiveTab] = useState('description');
@@ -25,60 +26,93 @@ const ProblemSolve = () => {
     setLoading(true);
     try {
       let problemData;
-      
-      // Check if problem data was passed via navigation state
+
       if (location.state?.problem) {
         problemData = location.state.problem;
       } else {
-        // Extract platform and title from problemId
         const [platform, ...titleParts] = problemId.split('-');
         const titleSlug = titleParts.join('-').toLowerCase();
-        
+
         if (platform === 'leetcode') {
           problemData = await CodingApiService.fetchLeetCodeProblem(titleSlug);
         } else {
-          // For other platforms, use generic fetch
           problemData = await CodingApiService.getFallbackProblem(titleSlug);
         }
       }
-      
+
       setProblem(problemData);
       setCode(problemData.starterCode?.javascript || '// Write your code here');
     } catch (error) {
       console.error('Error loading problem:', error);
-      // Set fallback problem
       setProblem({
         id: problemId,
         title: 'Problem Not Found',
         difficulty: 'medium',
         description: 'Unable to load problem details. Please try again later.',
         starterCode: { javascript: '// Problem not available' },
-        testCases: []
+        testCases: [],
       });
     } finally {
       setLoading(false);
     }
   };
 
+  // ✅ Handle code execution
+  const handleRunCode = async () => {
+    if (!problem) return;
+    setIsRunning(true);
+    setTestResults([]);
+
+    try {
+      // Simulate test case execution (You can replace this with a real API call)
+      const simulatedResults = problem.testCases?.length
+        ? problem.testCases.map((test, index) => ({
+            id: index + 1,
+            input: test.input || 'N/A',
+            expected: test.expectedOutput || 'N/A',
+            output: test.expectedOutput || 'N/A',
+            status: 'passed',
+          }))
+        : [
+            {
+              id: 1,
+              input: 'Example Input',
+              expected: 'Expected Output',
+              output: 'Expected Output',
+              status: 'passed',
+            },
+          ];
+
+      setTimeout(() => {
+        setTestResults(simulatedResults);
+        setIsRunning(false);
+      }, 1500);
+    } catch (error) {
+      console.error('Error running code:', error);
+      setTestResults([
+        { id: 1, input: '-', expected: '-', output: 'Error occurred', status: 'failed' },
+      ]);
+      setIsRunning(false);
+    }
+  };
+
   const handleSubmit = async () => {
     setIsRunning(true);
-    
-    // Simulate submission
+
     setTimeout(() => {
-      const allPassed = testResults.every(result => result.status === 'passed');
-      
+      const allPassed = testResults.every((result) => result.status === 'passed');
+
       if (allPassed) {
         alert('🎉 Congratulations! Your solution was accepted!');
-        // Update user stats and mark problem as solved
       } else {
         alert('❌ Some test cases failed. Please try again.');
       }
-      
+
       setIsRunning(false);
     }, 1500);
   };
 
-  if (!problem) {
+  if (!problem || loading) {
     return <div className="loading">Loading problem...</div>;
   }
 
@@ -97,29 +131,29 @@ const ProblemSolve = () => {
       </div>
 
       <div className="problem-layout">
-        {/* Problem Description Panel */}
+        {/* Left: Problem Description */}
         <div className="problem-description-panel">
           <div className="description-tabs">
-            <button 
+            <button
               className={`tab-btn ${activeTab === 'description' ? 'active' : ''}`}
               onClick={() => setActiveTab('description')}
             >
               Description
             </button>
-            <button 
+            <button
               className={`tab-btn ${activeTab === 'solutions' ? 'active' : ''}`}
               onClick={() => setActiveTab('solutions')}
             >
               Solutions
             </button>
-            <button 
+            <button
               className={`tab-btn ${activeTab === 'discussions' ? 'active' : ''}`}
               onClick={() => setActiveTab('discussions')}
             >
               Discussions
             </button>
           </div>
-          
+
           <div className="description-content">
             {activeTab === 'description' && (
               <ProblemDescription description={problem.description} />
@@ -139,7 +173,7 @@ const ProblemSolve = () => {
           </div>
         </div>
 
-        {/* Code Editor Panel */}
+        {/* Right: Code Editor */}
         <div className="code-editor-panel">
           <div className="editor-header">
             <select className="language-select">
@@ -148,19 +182,12 @@ const ProblemSolve = () => {
               <option value="java">Java</option>
               <option value="cpp">C++</option>
             </select>
+
             <div className="editor-actions">
-              <button 
-                className="run-btn"
-                onClick={handleRunCode}
-                disabled={isRunning}
-              >
+              <button className="run-btn" onClick={handleRunCode} disabled={isRunning}>
                 {isRunning ? 'Running...' : 'Run'}
               </button>
-              <button 
-                className="submit-btn"
-                onClick={handleSubmit}
-                disabled={isRunning}
-              >
+              <button className="submit-btn" onClick={handleSubmit} disabled={isRunning}>
                 {isRunning ? 'Submitting...' : 'Submit'}
               </button>
             </div>
@@ -168,11 +195,7 @@ const ProblemSolve = () => {
 
           <CodeEditor code={code} onChange={setCode} />
 
-          {/* Terminal/Test Results */}
-          <Terminal 
-            testResults={testResults}
-            isRunning={isRunning}
-          />
+          <Terminal testResults={testResults} isRunning={isRunning} />
         </div>
       </div>
     </div>

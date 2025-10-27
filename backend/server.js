@@ -7,10 +7,12 @@ import jobRoutes from "./routes/jobRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import 'dotenv/config';
 import applicationRoutes from "./routes/applicationRoutes.js";
+import openrouterRoutes from "./routes/openrouterRoutes.js";
+
 
 const app = express();
 
-// ✅ SIMPLE CORS setup - No complex configuration
+// ✅ SIMPLE CORS setup
 app.use(cors({
   origin: [
     "http://localhost:5178",
@@ -21,9 +23,8 @@ app.use(cors({
   credentials: true
 }));
 
-// ✅ Manual CORS headers for preflight - WITHOUT using app.options('*')
+// ✅ Manual CORS headers for preflight
 app.use((req, res, next) => {
-  // Handle preflight requests
   if (req.method === 'OPTIONS') {
     res.header('Access-Control-Allow-Origin', req.headers.origin);
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -53,10 +54,13 @@ mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/jobportal")
   console.error("❌ MongoDB connection error:", err);
 });
 
-// ✅ Routes
+// ✅ ALL ROUTES IN ONE PLACE (Remove the duplicate above)
 app.use("/api/jobs", jobRoutes);
 app.use("/api", authRoutes);
 app.use("/api/applications", applicationRoutes);
+app.use("/api/openrouter", openrouterRoutes);
+
+
 // ✅ Health check
 app.get("/api/health", (req, res) => {
   res.json({ 
@@ -74,6 +78,14 @@ app.get("/api/test", (req, res) => {
   });
 });
 
+// ✅ Bytez test endpoint
+app.get("/api/bytez/test", (req, res) => {
+  res.json({ 
+    message: "Bytez routes are working!",
+    route: "/api/bytez/generate should be available"
+  });
+});
+
 // ✅ Root route
 app.get("/", (req, res) => {
   res.json({ 
@@ -82,8 +94,10 @@ app.get("/", (req, res) => {
     endpoints: {
       health: 'GET /api/health',
       test: 'GET /api/test',
+      bytez_test: 'GET /api/bytez/test',
       jobs: 'GET /api/jobs',
-      login: 'POST /api/login'
+      login: 'POST /api/login',
+      bytez_generate: 'POST /api/bytez/generate'
     }
   });
 });
@@ -91,5 +105,5 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`✅ CORS enabled for frontend development`);
+  console.log(`✅ Bytez routes available at http://localhost:${PORT}/api/bytez`);
 });

@@ -9,7 +9,7 @@ import html2pdf from "html2pdf.js";
 
 import ModernResume from "../Templates/ModernResume";
 import ClassicResume from "../Templates/ClassicResume";
-
+import Chatbot  from '../../components/chatbotwidget.jsx';
 import "../ResumeBuilder/Resume.css";
 
 const ResumeBuilder = () => {
@@ -1098,7 +1098,7 @@ const ResumeBuilder = () => {
         </div>
       </div>
       
-     
+      <Chatbot />
     </div>
   );
 };
