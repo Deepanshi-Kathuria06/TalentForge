@@ -12,12 +12,13 @@ import Resume from "./Pages/ResumeBuilder/resumeEditor";
 import Starting from "../src/Pages/ResumeBuilder/Starting.jsx";
 import CompanyDashboard from "./Pages/CompanyDashboard/CompanyDashboard.jsx";
 import Udashboard from "./Pages/UserDashboard/Udashboard.jsx"
-import Dashboard from "./Pages/UserDashboard/Dashboard";
+// import Dashboard from "./Pages/UserDashboard/Dashboard";
 import SavedDesign from "./Pages/ResumeBuilder/saveddesign";
 import Challenges from "./Pages/UserDashboard/Sections/Challenges/Challenges.jsx";
 import ProblemSolve from './Pages/UserDashboard/Sections/Challenges/ProblemSolve.jsx';
 import { AuthProvider } from '../src/Pages/Auth/AuthContext';
 import { FeedProvider } from './components/Feed/FeedContext';
+import Profile from "./Pages/UserDashboard/Sections/Profile/Profile.jsx"
 
 
 
@@ -35,12 +36,14 @@ function MainApp() {
         <Route path="/challenges" element={<Challenges />} />
         <Route path="/CompanyDashboard" element={<CompanyDashboard />} />
         <Route path="/Udashboard" element={<Udashboard />} />
-        <Route path="/Dashboard" element={<Dashboard />} />
+        {/* <Route path="/Dashboard" element={<Dashboard />} /> */}
         <Route path="/resume-builder/saveddesign" element={<SavedDesign />} />
         <Route path="/solve/:problemId" element={<ProblemSolve />} />
         <Route path="/ResumeBuilder/resumeEditor" element={<Resume />} />
-        
-        
+        <Route path="/Profile/:id" element={<Profile />} />
+        <Route path="/Profile" element={<Profile />} />
+        <Route path="/me" element={<Profile />} />
+
       </Routes>
   
     </BrowserRouter>

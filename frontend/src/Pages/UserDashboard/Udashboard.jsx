@@ -13,6 +13,8 @@ import ApplicationModal from '../../components/jobs/ApplicationModal';
 import Resume from '../ResumeBuilder/Starting';
 import Challenge from './Sections/Challenges/ChallengeWelcome';
 import ChallengesStart from './Sections/Challenges/ChallengeStart';
+import Profile from './Sections/Profile/Profile';
+import DashboardNavbar from '../../components/DashboardNavbar'
 
 
 const UDashboard = () => {
@@ -654,6 +656,9 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
 
       case "challenges":
         return <ChallengesStart/>;
+      
+      case "Profile":
+        return <Profile />;
 
       case 'dashboard':
       default:
@@ -955,43 +960,15 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
 
   return (
     <div className="candidate-dashboard">
+     
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
-      
+     
       <div className={`main-content ${sidebarExpanded ? "expanded" : ""}`}>
-        <div className="top-bar">
-          <div className="search-bar">
-            <i className="fas fa-search"></i>
-            <input type="text" placeholder="Search jobs, companies, or skills..." />
-          </div>
-          
-          <div className="profile-section">
-            <div className="stats">
-              <div className="stat-item">
-                <span className="stat-value">24</span>
-                <span className="stat-label">Applications</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-value">156</span>
-                <span className="stat-label">Views</span>
-              </div>
-            </div>
-            
-           <div className="profile-info">
-              <img
-                src={user?.avatar || "https://randomuser.me/api/portraits/men/32.jpg"}
-                alt="User Avatar"
-                className="profile-avatar"
-              />
-              <div className="profile-details">
-                <h3 className="profile-name">{user?.name || 'Student'}</h3>
-                <p className="profile-role">{getUserRole()}</p>
-              </div>
-              <button className="logout-btn" onClick={handleLogout}>
-                <i className="fas fa-sign-out-alt"></i>
-              </button>
-            </div>
-          </div>
-        </div>
+        <DashboardNavbar
+      user={user}
+      handleLogout={handleLogout}
+      getUserRole={getUserRole}
+    />
 
         <div className="dashboard-content">
           {renderPageContent()}

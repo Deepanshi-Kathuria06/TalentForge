@@ -8,6 +8,7 @@ import "../CompanyDashboard/Dashboard.css";
 import JobForm from './JobForm';
 import API from '../../utils/api';
 import ScreeningSection from './sections/ScreeningSection';
+import DashboardNavbar from '../../components/DashboardNavbar';
 
 const CompanyDashboard = () => {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
@@ -767,43 +768,13 @@ const CompanyDashboard = () => {
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
       
       <div className={`main-content ${sidebarExpanded ? "expanded" : ""}`}>
-        <div className="top-bar">
-          <div className="search-bar">
-            <i className="fas fa-search"></i>
-            <input type="text" placeholder="Search candidates, skills, or jobs..." />
-          </div>
+ <DashboardNavbar
+      user={user}
+      handleLogout={handleLogout}
+      getUserRole={getUserRole}
+    />
           
-          <div className="profile-section">
-            <div className="stats">
-              <div className="stat-item">
-                <span className="stat-value">{feedPosts.length}</span>
-                <span className="stat-label">Posts</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-value">{postedJobs.length}</span>
-                <span className="stat-label">Open Jobs</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-value">{applications.length}</span>
-                <span className="stat-label">Applications</span>
-              </div>
-            </div>
-            
-            <div className="profile">
-              <img src={user?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"} alt="Profile" className="profile-img" />
-              <div className="profile-info">
-                <span className="profile-name">{user?.name || 'Company'}</span>
-                <span className="profile-role">
-                  {getUserRole()}
-                </span>
-              </div>
-              <button className="logout-btn" onClick={handleLogout}>
-                <i className="fas fa-sign-out-alt"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
+         
         <div className="dashboard-content">
           {renderContent()}
         </div>

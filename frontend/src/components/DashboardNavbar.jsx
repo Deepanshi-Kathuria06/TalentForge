@@ -1,68 +1,51 @@
-import React, { useState } from "react";
-import Settings from "../UserDashboard/Sections/Settings";
-import DashboardNavbar from "../UserDashboard/DashboardNavbar";
-import './UserDashboard.css';
+// src/components/UserDashboard/DashboardNavbar.jsx
+import React from "react";
+import "./DashboardNavbar.css";
 
-const Dashboard = ({ onLogout, user }) => {
-  const [activePage, setActivePage] = useState("stats");
-
-  // Renders content based on selected sidebar page
-  const renderPageContent = () => {
-    switch (activePage) {
-      case "stats":
-        return (
-          <div className="stats-section">
-            <h2>Dashboard Overview</h2>
-            <p>Here you can see your key stats...</p>
-          </div>
-        );
-      case "profile":
-        return (
-          <div className="profile-section">
-            <h2>Profile</h2>
-            <p><strong>Name:</strong> {user?.name}</p>
-            <p><strong>Email:</strong> {user?.email}</p>
-            <p><strong>Role:</strong> {user?.role}</p>
-          </div>
-        );
-      case "settings":
-        return <Settings />;
-      default:
-        return <div>Coming Soon...</div>;
-    }
-  };
-
+const DashboardNavbar = ({ user, handleLogout, getUserRole }) => {
   return (
-    <div className="dashboard-container">
-      {/* ✅ Top Navbar */}
-      <DashboardNavbar user={user} onLogout={onLogout} />
+    <div className="top-bar">
+      {/* 🔍 Search Bar */}
+      <div className="search-bar">
+        <i className="fas fa-search"></i>
+        <input
+          type="text"
+          placeholder="Search jobs, companies, or skills..."
+        />
+      </div>
 
-      <div className="dashboard-body">
-        {/* Sidebar */}
-        <div className="sidebar">
-          <ul>
-            <li onClick={() => setActivePage("stats")}>📊 Dashboard</li>
-            <li onClick={() => setActivePage("profile")}>👤 Profile</li>
-            <li onClick={() => setActivePage("resume")}>📄 Resume Tools</li>
-            <li onClick={() => setActivePage("projects")}>📂 Projects</li>
-            <li onClick={() => setActivePage("apps")}>💼 Applications</li>
-            <li onClick={() => setActivePage("gamify")}>🏆 Gamify</li>
-            <li onClick={() => setActivePage("network")}>🤝 Network</li>
-            <li onClick={() => setActivePage("saved")}>⭐ Saved</li>
-            <li onClick={() => setActivePage("challenges")}>🧑‍💻 Challenges</li>
-            <li onClick={() => setActivePage("learning")}>📚 Learning</li>
-            <li onClick={() => setActivePage("notifications")}>🔔 Notifications</li>
-            <li onClick={() => setActivePage("settings")}>⚙️ Settings</li>
-          </ul>
+      {/* 👤 Profile Section */}
+      <div className="profile-section">
+        <div className="stats">
+          <div className="stat-item">
+            <span className="stat-value">24</span>
+            <span className="stat-label">Applications</span>
+          </div>
+          <div className="stat-item">
+            <span className="stat-value">156</span>
+            <span className="stat-label">Views</span>
+          </div>
         </div>
 
-        {/* Main Content */}
-        <div className="main-content">
-          <div className="dashboard-content">{renderPageContent()}</div>
+        <div className="profile-info">
+          <img
+            src={
+              user?.avatar || "https://randomuser.me/api/portraits/men/32.jpg"
+            }
+            alt="User Avatar"
+            className="profile-avatar"
+          />
+          <div className="profile-details">
+            <h3 className="profile-name">{user?.name || "Student"}</h3>
+            <p className="profile-role">{getUserRole()}</p>
+          </div>
+          <button className="logout-btn" onClick={handleLogout}>
+            <i className="fas fa-sign-out-alt"></i>
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default DashboardNavbar;
