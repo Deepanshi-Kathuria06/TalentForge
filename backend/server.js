@@ -10,7 +10,7 @@ import { dirname } from "path";
 // Routes
 import jobRoutes from "./routes/jobRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
-import profileRoutes from "./routes/profile.js";
+import profileRoutes from "./routes/profileRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
 import openrouterRoutes from "./routes/openrouterRoutes.js";
 

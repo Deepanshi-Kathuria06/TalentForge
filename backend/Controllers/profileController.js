@@ -1,101 +1,62 @@
 import Profile from "../models/Profile.js";
+import User from "../models/User.js";
 
-// Create or Update Profile
-export const createOrUpdateProfile = async (req, res) => {
+// Get or create current user's profile
+export const createOrGetProfile = async (req, res) => {
   try {
-    const { userId, name, bio, experience, projects, profilePhoto } = req.body;
-    let profile = await Profile.findOne({ userId });
+    let profile = await Profile.findOne({ user: req.params.id }).populate("user", "name email");
 
-    if (profile) {
-      profile.name = name;
-      profile.bio = bio;
-      profile.profilePhoto = profilePhoto;
-      profile.experience = experience;
-      profile.projects = projects;
+    if (!profile) {
+      const user = await User.findById(req.params.id);
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      profile = new Profile({
+        user: user._id,
+        role: user.role,
+        bio: "Welcome to my profile!",
+      });
       await profile.save();
-      return res.json({ message: "Profile updated successfully", profile });
     }
 
-    const newProfile = await Profile.create({
-      userId,
-      name,
-      bio,
-      profilePhoto,
-      experience,
-      projects
-    });
-    res.status(201).json({ message: "Profile created", profile: newProfile });
+    res.json(profile);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
-// Get own profile
-export const getMyProfile = async (req, res) => {
+// Get profile by ID
+export const getProfileById = async (req, res) => {
   try {
-    const profile = await Profile.findOne({ userId: req.params.userId });
+    const profile = await Profile.findOne({ user: req.params.id }).populate("user", "name email");
     if (!profile) return res.status(404).json({ message: "Profile not found" });
     res.json(profile);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
-// Get another user’s profile
-export const getProfileByUserId = async (req, res) => {
+// Update profile
+export const updateProfile = async (req, res) => {
   try {
-    const profile = await Profile.findById(req.params.id).populate("userId");
-    if (!profile) return res.status(404).json({ message: "Profile not found" });
+    const profile = await Profile.findOneAndUpdate(
+      { user: req.params.id },
+      { $set: req.body },
+      { new: true }
+    );
     res.json(profile);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
-// Search by name
+// Search profiles by name
 export const searchProfiles = async (req, res) => {
   try {
-    const name = req.params.name;
-    const profiles = await Profile.find({
-      name: { $regex: name, $options: "i" }
-    });
+    const { q } = req.query;
+    const users = await User.find({ name: new RegExp(q, "i") }).limit(10);
+    const profiles = await Profile.find({ user: { $in: users.map(u => u._id) } }).populate("user", "name profilePhoto");
     res.json(profiles);
   } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// Follow / Unfollow
-export const followUser = async (req, res) => {
-  const { followerId, followingId } = req.body;
-  try {
-    await Profile.findOneAndUpdate(
-      { userId: followingId },
-      { $addToSet: { followers: followerId } }
-    );
-    await Profile.findOneAndUpdate(
-      { userId: followerId },
-      { $addToSet: { following: followingId } }
-    );
-    res.json({ message: "Followed successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-export const unfollowUser = async (req, res) => {
-  const { followerId, followingId } = req.body;
-  try {
-    await Profile.findOneAndUpdate(
-      { userId: followingId },
-      { $pull: { followers: followerId } }
-    );
-    await Profile.findOneAndUpdate(
-      { userId: followerId },
-      { $pull: { following: followingId } }
-    );
-    res.json({ message: "Unfollowed successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };

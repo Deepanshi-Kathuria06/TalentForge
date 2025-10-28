@@ -1,8 +1,42 @@
 // src/components/UserDashboard/DashboardNavbar.jsx
-import React from "react";
+import React, { useState } from "react";
 import "./DashboardNavbar.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const DashboardNavbar = ({ user, handleLogout, getUserRole }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const navigate = useNavigate();
+
+  // 🔍 Handle search input
+  const handleSearch = async (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query.trim() === "") {
+      setResults([]);
+      setShowResults(false);
+      return;
+    }
+
+    try {
+      const res = await axios.get(`http://localhost:5000/api/profile/search?name=${query}`);
+      setResults(res.data);
+      setShowResults(true);
+    } catch (error) {
+      console.error("Search error:", error);
+    }
+  };
+
+  // 👤 Navigate to selected profile
+  const handleSelectUser = (id) => {
+    navigate(`/profile/${id}`);
+    setShowResults(false);
+    setSearchQuery("");
+  };
+
   return (
     <div className="top-bar">
       {/* 🔍 Search Bar */}
@@ -10,8 +44,32 @@ const DashboardNavbar = ({ user, handleLogout, getUserRole }) => {
         <i className="fas fa-search"></i>
         <input
           type="text"
-          placeholder="Search jobs, companies, or skills..."
+          placeholder="Search users by name..."
+          value={searchQuery}
+          onChange={handleSearch}
+          onFocus={() => setShowResults(true)}
+          onBlur={() => setTimeout(() => setShowResults(false), 150)}
         />
+
+        {/* 🔽 Dropdown Results */}
+        {showResults && results.length > 0 && (
+          <div className="search-results-dropdown">
+            {results.map((item) => (
+              <div
+                key={item._id}
+                className="search-result-item"
+                onClick={() => handleSelectUser(item._id)}
+              >
+                <img
+                  src={item.profilePhoto || "https://randomuser.me/api/portraits/men/32.jpg"}
+                  alt={item.name}
+                  className="result-avatar"
+                />
+                <span>{item.name}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* 👤 Profile Section */}
@@ -29,9 +87,7 @@ const DashboardNavbar = ({ user, handleLogout, getUserRole }) => {
 
         <div className="profile-info">
           <img
-            src={
-              user?.avatar || "https://randomuser.me/api/portraits/men/32.jpg"
-            }
+            src={user?.avatar || "https://randomuser.me/api/portraits/men/32.jpg"}
             alt="User Avatar"
             className="profile-avatar"
           />

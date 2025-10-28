@@ -40,11 +40,10 @@ API.interceptors.response.use(
 
 // ✅ Profile API routes
 export const profileAPI = {
-  getAllProfiles: () => API.get("/profile"),
-  getProfile: (userId) => API.get(`/profile/${userId}`),
-  updateProfile: (data) => API.post("/profile/update", data),
-  followUser: (data) => API.post("/profile/follow", data),
-  unfollowUser: (data) => API.post("/profile/unfollow", data),
+  getMyProfile: (id) => API.get(`/profile/me/${id}`),
+  getProfileById: (id) => API.get(`/profile/${id}`),
+  updateProfile: (id, data) => API.put(`/profile/update/${id}`, data),
+  searchProfiles: (query) => API.get(`/profile/search?q=${query}`),
 };
 
 // ✅ (Optional) Auth API routes

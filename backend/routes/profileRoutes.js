@@ -1,20 +1,17 @@
-import express from "express";
+import express from "express"; 
 import {
-  createOrUpdateProfile,
-  getMyProfile,
-  getProfileByUserId,
+  getProfileById,
+  updateProfile,
+  createOrGetProfile,
   searchProfiles,
-  followUser,
-  unfollowUser
-} from "../Controllers/profileController";
+} from "../Controllers/profileController.js";
+
 
 const router = express.Router();
 
-router.post("/create", createOrUpdateProfile); // Create or update
-router.get("/me/:userId", getMyProfile);       // Get current user’s profile
-router.get("/:id", getProfileByUserId);        // View other’s profile
-router.get("/search/:name", searchProfiles);   // Search by name
-router.post("/follow", followUser);            // Follow someone
-router.post("/unfollow", unfollowUser);        // Unfollow
+router.get("/me/:id", createOrGetProfile);   // Get or create my profile
+router.get("/:id", getProfileById);          // Get profile by user ID
+router.put("/update/:id", updateProfile);    // Update profile
+router.get("/search", searchProfiles);       // Search by name
 
 export default router;
