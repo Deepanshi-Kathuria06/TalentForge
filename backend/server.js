@@ -1,4 +1,4 @@
-// server.js
+// server.js - Remove the users.js import
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -13,6 +13,9 @@ import authRoutes from "./routes/authRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
 import openrouterRoutes from "./routes/openrouterRoutes.js";
+import feedRoutes from "./routes/feed.js"; // ✅ KEEP ONLY FEED ROUTES
+import userRoutes from './routes/user.js'; 
+import searchRoutes from './routes/searchRoutes.js';
 
 dotenv.config();
 
@@ -54,6 +57,9 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/openrouter", openrouterRoutes);
+app.use("/api/feed", feedRoutes); // ✅ ADD FEED ROUTES
+app.use("/api/users", userRoutes);
+app.use("/api/search", searchRoutes);
 
 // ✅ Health Check
 app.get("/api/health", (req, res) => {
@@ -69,6 +75,10 @@ app.get("/api/test", (req, res) => {
   res.json({ message: "Backend is working!", timestamp: new Date().toISOString() });
 });
 
+app.get("/api/feed/test", (req, res) => {
+  res.json({ message: "Feed routes are working!", timestamp: new Date().toISOString() });
+});
+
 app.get("/api/bytez/test", (req, res) => {
   res.json({ message: "Bytez routes are working!", route: "/api/bytez/generate should be available" });
 });
@@ -81,10 +91,13 @@ app.get("/", (req, res) => {
     endpoints: {
       health: "GET /api/health",
       test: "GET /api/test",
+      feed_test: "GET /api/feed/test",
       bytez_test: "GET /api/bytez/test",
       jobs: "GET /api/jobs",
       login: "POST /api/auth/login",
-      bytez_generate: "POST /api/bytez/generate"
+      bytez_generate: "POST /api/bytez/generate",
+      feed_posts: "GET /api/feed/posts",
+      create_post: "POST /api/feed/posts"
     }
   });
 });
@@ -99,5 +112,5 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`✅ Bytez routes available at http://localhost:${PORT}/api/bytez`);
+  console.log(`✅ Feed routes available at http://localhost:${PORT}/api/feed`);
 });

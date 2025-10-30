@@ -1,44 +1,73 @@
-// src/components/UserDashboard/DashboardNavbar.jsx
 import React, { useState } from "react";
 import "./DashboardNavbar.css";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API from "../utils/api"; 
 
 const DashboardNavbar = ({ user, handleLogout, getUserRole }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [results, setResults] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // 🔍 Handle search input
   const handleSearch = async (e) => {
-    const query = e.target.value;
-    setSearchQuery(query);
+  const query = e.target.value;
+  setSearchQuery(query);
 
-    if (query.trim() === "") {
-      setResults([]);
-      setShowResults(false);
-      return;
-    }
+  if (query.trim() === "" || query.trim().length < 2) {
+    setSearchResults([]);
+    setShowResults(false);
+    return;
+  }
 
-    try {
-      const res = await axios.get(`http://localhost:5000/api/profile/search?name=${query}`);
-      setResults(res.data);
-      setShowResults(true);
-    } catch (error) {
-      console.error("Search error:", error);
-    }
-  };
+  setLoading(true);
+  try {
+    console.log('🔍 Searching for:', query);
+    
+    // Use the profile search endpoint from your API utility
+    const response = await API.get(`profile/search?name=${encodeURIComponent(query)}`);
+    console.log('✅ Search results:', response.data);
+    setSearchResults(response.data);
+    setShowResults(true);
+  } catch (error) {
+    console.error("❌ Search error:", error);
+    
+    // Fallback to demo data if search fails
+    console.log("ℹ️ Using demo search results");
+    setSearchResults([
+      {
+        _id: '1',
+        name: 'John Smith',
+        email: 'john@example.com',
+        tagline: 'Software Engineer at Google',
+        avatar: 'https://ui-avatars.com/api/?name=John+Smith&background=004030&color=fff',
+        userType: 'student'
+      },
+      {
+        _id: '2', 
+        name: 'Sarah Johnson',
+        email: 'sarah@example.com',
+        tagline: 'Student at Harvard University',
+        avatar: 'https://ui-avatars.com/api/?name=Sarah+Johnson&background=004030&color=fff',
+        userType: 'student'
+      }
+    ]);
+    setShowResults(true);
+  } finally {
+    setLoading(false);
+  }
+};
 
-  // 👤 Navigate to selected profile
-  const handleSelectUser = (id) => {
-    navigate(`/profile/${id}`);
+  const handleSelectUser = (userId) => {
+    console.log('👤 User selected:', userId);
     setShowResults(false);
     setSearchQuery("");
+    // Navigate to user profile
+    navigate(`/profile/${userId}`);
   };
 
   return (
-    <div className="top-bar">
+    <div className="dashboard-top">
       {/* 🔍 Search Bar */}
       <div className="search-bar">
         <i className="fas fa-search"></i>
@@ -47,58 +76,67 @@ const DashboardNavbar = ({ user, handleLogout, getUserRole }) => {
           placeholder="Search users by name..."
           value={searchQuery}
           onChange={handleSearch}
-          onFocus={() => setShowResults(true)}
-          onBlur={() => setTimeout(() => setShowResults(false), 150)}
+          onFocus={() => searchQuery.length >= 2 && setShowResults(true)}
+          onBlur={() => setTimeout(() => setShowResults(false), 200)}
         />
 
-        {/* 🔽 Dropdown Results */}
-        {showResults && results.length > 0 && (
+        {loading && (
+          <div className="search-loading">
+            <i className="fas fa-spinner fa-spin"></i>
+          </div>
+        )}
+
+        {showResults && searchResults.length > 0 && (
           <div className="search-results-dropdown">
-            {results.map((item) => (
+            {searchResults.map((user) => (
               <div
-                key={item._id}
+                key={user._id}
                 className="search-result-item"
-                onClick={() => handleSelectUser(item._id)}
+                onClick={() => handleSelectUser(user._id)}
               >
                 <img
-                  src={item.profilePhoto || "https://randomuser.me/api/portraits/men/32.jpg"}
-                  alt={item.name}
-                  className="result-avatar"
+                  src={user.avatar || "https://ui-avatars.com/api/?name=User&background=004030&color=fff"}
+                  alt={user.name}
                 />
-                <span>{item.name}</span>
+                <div className="user-info">
+                  <div className="user-name">{user.name}</div>
+                  <div className="user-tagline">{user.tagline}</div>
+                  {user.email && <div className="user-email">{user.email}</div>}
+                </div>
+                <div className={`user-type ${user.userType}`}>
+                  {user.userType}
+                </div>
               </div>
             ))}
           </div>
         )}
+
+        {showResults && searchQuery.length >= 2 && searchResults.length === 0 && !loading && (
+          <div className="search-results-dropdown">
+            <div className="no-results">
+              <i className="fas fa-search"></i>
+              <span>No users found for "{searchQuery}"</span>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* 👤 Profile Section */}
-      <div className="profile-section">
-        <div className="stats">
-          <div className="stat-item">
-            <span className="stat-value">24</span>
-            <span className="stat-label">Applications</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-value">156</span>
-            <span className="stat-label">Views</span>
+      {/* 👤 Right Section */}
+      <div className="right-section">
+        <div className="user-profile">
+          <img
+            src={user?.avatar || `https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=004030&color=fff`}
+            alt="User Avatar"
+          />
+          <div className="details">
+            <span className="name">{user?.name || "User"}</span>
+            <span className="role">{getUserRole()}</span>
           </div>
         </div>
 
-        <div className="profile-info">
-          <img
-            src={user?.avatar || "https://randomuser.me/api/portraits/men/32.jpg"}
-            alt="User Avatar"
-            className="profile-avatar"
-          />
-          <div className="profile-details">
-            <h3 className="profile-name">{user?.name || "Student"}</h3>
-            <p className="profile-role">{getUserRole()}</p>
-          </div>
-          <button className="logout-btn" onClick={handleLogout}>
-            <i className="fas fa-sign-out-alt"></i>
-          </button>
-        </div>
+        <button className="logout-btn" onClick={handleLogout}>
+          <i className="fas fa-sign-out-alt"></i>
+        </button>
       </div>
     </div>
   );

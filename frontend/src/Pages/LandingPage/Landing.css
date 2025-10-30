@@ -123,6 +123,7 @@ html,body{
   gap: 20px;
   justify-content: center;
   flex-wrap: wrap;
+
 }
 
 
@@ -132,48 +133,27 @@ html,body{
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  border: none;
+ border: none;
   font-size: 1rem;
   min-width: 180px;
+  /* border: 2px solid #d7d3c6; */
 }
 
-.primary-btn {
-<<<<<<< HEAD
-  background: transparent;
-  color: #FFF9E5;
-    border: 2px solid #FFF9E5;
 
-}
 
-.secondary-btn {
-=======
->>>>>>> 0e22585c35c45c2a04c9088d885a31745f628fb6
-  background: transparent;
-  color: #FFF9E5;
-    border: 2px solid #FFF9E5;
-
-}
 
 
 
 .primary-btn:hover {
-<<<<<<< HEAD
   background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
 }
 
 .secondary-btn:hover {
-=======
->>>>>>> 0e22585c35c45c2a04c9088d885a31745f628fb6
   background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
 }
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 0e22585c35c45c2a04c9088d885a31745f628fb6
 @keyframes rotateGlobe {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

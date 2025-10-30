@@ -1,6 +1,7 @@
 // components/JobForm.js
 import React, { useState } from "react";
 import API from '../../utils/api';
+// import '..'
 
 const JobForm = ({ onSuccess, user }) => {
   const [jobData, setJobData] = useState({

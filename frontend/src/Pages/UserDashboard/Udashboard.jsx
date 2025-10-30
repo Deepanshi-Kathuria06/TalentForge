@@ -15,6 +15,8 @@ import Challenge from './Sections/Challenges/ChallengeWelcome';
 import ChallengesStart from './Sections/Challenges/ChallengeStart';
 import Profile from './Sections/Profile/Profile';
 import DashboardNavbar from '../../components/DashboardNavbar'
+import { FaMapMarkerAlt, FaBriefcase, FaDollarSign, FaCalendarAlt } from 'react-icons/fa';
+
 
 
 const UDashboard = () => {
@@ -464,8 +466,10 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
               <div
                 className={`menu-item ${activePage === item.page ? "active" : ""}`}
                 onClick={() => {
-               if (item.page === "resume") {
+            if (item.page === "resume") {
   window.location.href = "http://localhost:5178/starting";
+} else if (item.page === "profile") {
+  window.location.href = "/Profile"; // or your actual profile route
 } else {
   setActivePage(item.page);
 }
@@ -522,22 +526,23 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
                   </div>
                   
                   <div className="job-details">
-                    <div className="detail-item">
-                      <span className="icon">📍</span>
-                      <span>{job.location}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="icon">💼</span>
-                      <span>{job.type}</span>
-                    </div>
-                    {job.salaryRange && (
-                      <div className="detail-item">
-                        <span className="icon">💰</span>
-                        <span>{job.salaryRange}</span>
-                      </div>
-                    )}
+<div className="details-row">
+  <div className="detail-item">
+    <span className="icon"><FaMapMarkerAlt /></span>
+    <span>{job.location}</span>
+  </div>
+  <div className="detail-item">
+    <span className="icon"><FaBriefcase /></span>
+    <span>{job.type}</span>
+  </div>
+  {job.salaryRange && (
+    <div className="detail-item">
+      <span className="icon"><FaDollarSign /></span>
+      <span>{job.salaryRange}</span>
+    </div>
+  )}
+</div>
                   </div>
-
                   <div className="job-description">
                     <p>{job.description}</p>
                   </div>
@@ -565,45 +570,14 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
             </div>
           )}
         </div>
-
+/*
         {/* Debug Info */}
-        <div style={{ 
-          background: '#f8f9fa', 
-          padding: '15px', 
-          margin: '20px 0', 
-          borderRadius: '8px',
-          border: '1px solid #dee2e6'
-        }}>
-          <h4>Debug Information:</h4>
-          <p><strong>Total Jobs:</strong> {allJobs.length}</p>
-          <p><strong>Backend URL:</strong> http://localhost:5000/api/jobs</p>
-          <button 
-            onClick={() => {
-              console.log('All Jobs:', allJobs);
-              console.log('User:', user);
-              
-              fetch('http://localhost:5000/api/jobs')
-                .then(res => res.json())
-                .then(data => console.log('Direct fetch result:', data))
-                .catch(err => console.error('Direct fetch error:', err));
-            }}
-            style={{ 
-              padding: '5px 10px',
-              background: '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              margin: '5px'
-            }}
-          >
-            Test Endpoint
-          </button>
-        </div>
+      
       </div>
     );
   };
-
+  // Debug Info
+// 
   // Render different pages based on activePage state
   const renderPageContent = () => {
     switch (activePage) {
@@ -664,47 +638,8 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
       default:
         return (
           <>
-            <div className="left-column">
-              <div className="card highlight-card">
-                <h3>Profile Strength</h3>
-                <div className="progress-bar">
-                  <div className="progress" style={{width: '75%'}}></div>
-                </div>
-                <div className="badges">
-                  <span className="badge"><i className="fas fa-award"></i> Top 10%</span>
-                  <span className="badge"><i className="fas fa-star"></i> Skill Verified</span>
-                  <span className="badge"><i className="fas fa-check-circle"></i> Profile Complete</span>
-                </div>
-              </div>
 
-              <div className="card">
-                <h3>Applications / Views</h3>
-                <div className="graph-placeholder">
-                  <i className="fas fa-chart-bar graph-icon"></i>
-                  <p>Application metrics visualization</p>
-                </div>
-              </div>
-
-              <div className="card">
-                <h3>Ongoing Projects</h3>
-                <div className="project-cards">
-                  <div className="project-card">
-                    <h4>Portfolio Website</h4>
-                    <p>React, Node.js, MongoDB</p>
-                    <div className="project-status in-progress">In Progress</div>
-                    <button className="project-btn">View Live</button>
-                  </div>
-                  <div className="project-card">
-                    <h4>E-commerce App</h4>
-                    <p>Vue.js, Express, PostgreSQL</p>
-                    <div className="project-status completed">Completed</div>
-                    <button className="project-btn">View Live</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="center-column">
+    <div className="center-column">
               <div className="posts-feed">
                 <div className="feed-header">
                   <h3>Professional Feed</h3>
@@ -717,72 +652,100 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
                 </div>
                 
                 <div className="posts-container">
-                  {feedPosts.map(post => (
-                    <div key={post.id} className="post-card">
-                      <div className="post-header">
-                        <img src={post.author.avatar} alt={post.author.name} className="author-avatar" />
-                        <div className="author-info">
-                          <div className="author-name">
-                            {post.author.name}
-                            {post.author.isVerified && <i className="fas fa-check-circle verified-badge"></i>}
-                          </div>
-                          <div className="author-role">{post.author.role}</div>
-                          <div className="post-timestamp">{post.timestamp}</div>
-                        </div>
-                        <button className="post-menu">
-                          <i className="fas fa-ellipsis-h"></i>
-                        </button>
-                      </div>
-                      
-                      <div className="post-content">
-                        <p>{post.content}</p>
-                        {post.images && post.images.length > 0 && (
-                          <div className="post-images-grid">
-                            {post.images.map((image, index) => (
-                              <img key={index} src={image} alt={`Post image ${index}`} />
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="post-actions">
-                        <button 
-                          className={`action-button like-btn ${post.liked ? 'liked' : ''}`}
-                          onClick={() => likePost(post.id)}
-                        >
-                          <i className="fas fa-thumbs-up"></i>
-                          <span>{post.likes}</span>
-                        </button>
-                        <button className="action-button comment-btn">
-                          <i className="fas fa-comment"></i>
-                          <span>{post.comments?.length || 0}</span>
-                        </button>
-                        <button 
-                          className="action-button share-btn"
-                          onClick={() => sharePost(post.id)}
-                        >
-                          <i className="fas fa-share"></i>
-                          <span>{post.shares}</span>
-                        </button>
-                      </div>
+  {feedPosts.map(post => (
+    <div key={post._id || post.id} className="post-card">
+      <div className="post-header">
+        <img 
+          src={post.author?.avatar || 'https://ui-avatars.com/api/?name=User&background=004030&color=fff'} 
+          alt={post.author?.name} 
+          className="author-avatar" 
+        />
+        <div className="author-info">
+          {/* ✅ Name Display */}
+          <div className="author-name">
+            {post.author?.name || 'Unknown User'}
+            {post.author?.isVerified && <i className="fas fa-check-circle verified-badge"></i>}
+          </div>
 
-                      {post.comments && post.comments.length > 0 && (
-                        <div className="comments-section">
-                          {post.comments.map(comment => (
-                            <div key={comment.id} className="comment">
-                              <img src={comment.author.avatar} alt={comment.author.name} className="comment-avatar" />
-                              <div className="comment-content">
-                                <div className="comment-author">{comment.author.name}</div>
-                                <div className="comment-text">{comment.text}</div>
-                                <div className="comment-timestamp">{comment.timestamp}</div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                      
+                      <div className="author-role">
+            {post.author?.userType === 'student' 
+              ? `Student at ${post.author?.university || 'University'}`
+              : `Recruiter at ${post.author?.company || 'Company'}`
+            }
+          </div>
+          
+          {/* ✅ Time Display */}
+          <div className="post-timestamp">
+            {post.timestamp || 
+             (post.createdAt ? new Date(post.createdAt).toLocaleString() : 'Just now')}
+          </div>
+        </div>
+        <button className="post-menu">
+          <i className="fas fa-ellipsis-h"></i>
+        </button>
+      </div>
+       <div className="post-content">
+        <p>{post.content}</p>
+        {post.images && post.images.length > 0 && (
+          <div className="post-images-grid">
+            {post.images.map((image, index) => (
+              <img 
+                key={index} 
+                src={image} 
+                alt={`Post image ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+<div className="post-actions">
+        <button 
+          className={`action-button like-btn ${post.liked ? 'liked' : ''}`}
+          onClick={() => likePost(post._id || post.id)}
+        >
+          <i className="fas fa-thumbs-up"></i>
+          <span>{post.likes?.length || 0}</span>
+        </button>
+        <button className="action-button comment-btn">
+          <i className="fas fa-comment"></i>
+          <span>{post.comments?.length || 0}</span>
+        </button>
+        <button 
+          className="action-button share-btn"
+          onClick={() => sharePost(post._id || post.id)}
+        >
+          <i className="fas fa-share"></i>
+          <span>{post.shares || 0}</span>
+        </button>
+      </div>
+
+{post.comments && post.comments.length > 0 && (
+        <div className="comments-section">
+          {post.comments.map(comment => (
+            <div key={comment._id || comment.id} className="comment">
+              <img 
+                src={comment.author?.avatar || 'https://ui-avatars.com/api/?name=User&background=004030&color=fff'} 
+                alt={comment.author?.name} 
+                className="comment-avatar" 
+              />
+              <div className="comment-content">
+                <div className="comment-author">{comment.author?.name || 'User'}</div>
+                <div className="comment-text">{comment.text}</div>
+                <div className="comment-timestamp">
+                  {comment.timestamp || 
+                   (comment.createdAt ? new Date(comment.createdAt).toLocaleString() : 'Just now')}
                 </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  ))}
+</div>
+
               </div>
             </div>
                       
@@ -876,77 +839,9 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
                 </div>
               </div>
 
-              <div className={`card chat-card ${chatExpanded ? 'expanded' : ''}`}>
-                <div className="chat-header">
-                  <h3>Messages</h3>
-                  <button className="chat-toggle" onClick={toggleChat}>
-                    <i className={`fas ${chatExpanded ? 'fa-chevron-down' : 'fa-chevron-up'}`}></i>
-                  </button>
-                </div>
+              
                 
-                {chatExpanded ? (
-                  <div className="chat-expanded-view">
-                    <div className="chat-search">
-                      <i className="fas fa-search"></i>
-                      <input type="text" placeholder="Search messages..." />
-                    </div>
-                    
-                    <div className="chat-list">
-                      {messages.map(message => (
-                        <div 
-                          key={message.id} 
-                          className={`chat-item ${message.unread ? 'unread' : ''}`}
-                          onClick={() => setActiveChat(message.id)}
-                        >
-                          <img 
-                            src={`https://randomuser.me/api/portraits/${message.name === 'Sneha' ? 'women' : 'men'}/${message.id * 10}.jpg`} 
-                            alt={message.name} 
-                            className="chat-avatar"
-                          />
-                          <div className="chat-info">
-                            <div className="chat-name">{message.name}</div>
-                            <div className="chat-role">{message.role}</div>
-                            <div className="chat-preview">{message.message}</div>
-                          </div>
-                          <div className="chat-meta">
-                            <span className="chat-time">{message.time}</span>
-                            {message.unread && <span className="unread-indicator"></span>}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className="chat-footer">
-                      <button className="new-message-btn">
-                        <i className="fas fa-plus"></i> New Message
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="chat-collapsed-view">
-                    <div className="chat-previews">
-                      {messages.slice(0, 2).map(message => (
-                        <div key={message.id} className="chat-preview-item">
-                          <img 
-                            src={`https://randomuser.me/api/portraits/${message.name === 'Deepanshi' ? 'women' : 'men'}/${message.id * 10}.jpg`} 
-                            alt={message.name} 
-                            className="chat-preview-avatar"
-                          />
-                          <div className="chat-preview-content">
-                            <span className="chat-preview-name">{message.name.split(' ')[0]}</span>
-                            <div className="chat-preview-text">{message.message.substring(0, 20)}...</div>
-                            </div>
-                            {message.unread && <span className="preview-unread-indicator"></span>}
-                          </div>
-                        ))}
-                      </div>
-                      <div className="chat-collapsed-footer">
-                        <span>{messages.filter(m => m.unread).length} unread</span>
-                        <button className="view-all-btn" onClick={toggleChat}>View all</button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                
               </div>
             </>
           );

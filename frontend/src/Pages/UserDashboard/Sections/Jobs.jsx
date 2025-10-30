@@ -1,149 +1,267 @@
-// components/UserDashboard/Sections/Jobs.jsx
-import React, { useState, useEffect } from 'react';
+// components/JobForm.js
+import React, { useState } from "react";
+import API from '../../../utils/api';
 
-
-
-const Jobs = () => {
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({
-    type: '',
-    category: '',
-    location: ''
+const JobForm = ({ onSuccess, user }) => {
+  const [jobData, setJobData] = useState({
+    title: "",
+    location: "",
+    type: "Full-time",
+    salaryRange: "",
+    description: "",
+    requirements: "",
+    category: "Engineering",
+    skills: "",
+    duration: ""
   });
 
-  useEffect(() => {
-    fetchJobs();
-  }, []);
+  const [loading, setLoading] = useState(false);
 
-  const fetchJobs = async () => {
+  const handleChange = (e) => {
+    setJobData({ ...jobData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
     try {
-      setLoading(true);
-      const response = await fetch("http://localhost:5000/api/jobs");
-      const jobsData = await response.json();
+      console.log("🚀 Starting job submission...");
+      console.log("User data:", user);
       
-      // Filter for full-time and part-time jobs (non-internships)
-      const regularJobs = jobsData.filter(job => 
-        job.type !== 'Internship' && job.type !== 'Contract'
-      );
+      if (!user || !user._id) {
+        alert("User not found. Please log in again.");
+        setLoading(false);
+        return;
+      }
+
+      const jobWithCompany = {
+        ...jobData,
+        company: user._id,
+        companyName: user.name || user.companyName || "Your Company"
+      };
+
+      console.log("📦 Job data to send:", jobWithCompany);
+      console.log("🔍 Testing endpoint: POST http://localhost:5000/api/jobs");
       
-      setJobs(regularJobs);
+      const response = await API.post('/jobs', jobWithCompany);
+      
+      console.log("✅ Backend response received:", response.data);
+      
+      if (response.data.success) {
+        alert("🎉 Job posted successfully! Saved to MongoDB database.");
+        onSuccess(response.data.job);
+        
+        setJobData({
+          title: "", location: "", type: "Full-time", salaryRange: "",
+          description: "", requirements: "", category: "Engineering",
+          duration: "", skills: ""
+        });
+      } else {
+        alert("❌ " + (response.data.error || "Failed to post job"));
+      }
     } catch (error) {
-      console.error('Error fetching jobs:', error);
+      console.error("💥 Job posting error:", error);
+      
+      if (error.response) {
+        console.error("📡 Server responded with error:");
+        console.error("Status:", error.response.status);
+        console.error("Data:", error.response.data);
+        
+        if (error.response.status === 404) {
+          alert("❌ Backend endpoint not found. Check if server is running on http://localhost:5000");
+        } else if (error.response.status === 500) {
+          alert("❌ Server error: " + (error.response.data?.error || "Internal server error"));
+        } else {
+          alert("❌ Error: " + (error.response.data?.error || "Unknown server error"));
+        }
+      } else if (error.request) {
+        console.error("🌐 No response received:", error.request);
+        alert("❌ Cannot connect to server. Make sure backend is running on http://localhost:5000");
+      } else {
+        console.error("⚡ Request setup error:", error.message);
+        alert("❌ Unexpected error: " + error.message);
+      }
+      
+      console.log("📝 Creating local job as fallback");
+      const mockJob = {
+        _id: Date.now().toString(),
+        ...jobData,
+        company: user._id,
+        companyName: user.name || user.companyName || "Your Company",
+        createdAt: new Date().toISOString(),
+        applicationCount: 0
+      };
+      
+      try {
+        const existingJobs = JSON.parse(localStorage.getItem('demoJobs') || '[]');
+        existingJobs.unshift(mockJob);
+        localStorage.setItem('demoJobs', JSON.stringify(existingJobs));
+        console.log("💾 Job saved to localStorage for UserDashboard");
+      } catch (storageError) {
+        console.error("Failed to save to localStorage:", storageError);
+      }
+      
+      onSuccess(mockJob);
+      alert("📋 Job saved locally (Backend not available). Students will see this job.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleApply = async (jobId) => {
-    try {
-      // Add your apply logic here
-      alert(`Applied to job successfully!`);
-    } catch (error) {
-      console.error('Error applying to job:', error);
-      alert('Failed to apply to job');
-    }
-  };
-
-  const filteredJobs = jobs.filter(job => {
-    return (
-      (filters.type === '' || job.type === filters.type) &&
-      (filters.category === '' || job.category === filters.category) &&
-      (filters.location === '' || job.location.toLowerCase().includes(filters.location.toLowerCase()))
-    );
-  });
-
-  if (loading) {
-    return <div className="loading">Loading jobs...</div>;
-  }
-
   return (
-    <div className="jobs-section">
-      <div className="section-header">
-        <h2>Job Opportunities</h2>
-        <p>Find your perfect full-time or part-time position</p>
+    <form className="job-form" onSubmit={handleSubmit}>
+      <div className="form-header">
+        <h3>Post a New Job</h3>
+        <p>Fill in the details below to create a new job posting</p>
       </div>
 
-      {/* Filters */}
-      <div className="filters">
-        <select 
-          value={filters.type} 
-          onChange={(e) => setFilters({...filters, type: e.target.value})}
-        >
-          <option value="">All Types</option>
-          <option value="Full-time">Full-time</option>
-          <option value="Part-time">Part-time</option>
-          <option value="Remote">Remote</option>
-        </select>
+      <div className="form-section">
+        <h4>Basic Information</h4>
+      </div>
 
-        <select 
-          value={filters.category} 
-          onChange={(e) => setFilters({...filters, category: e.target.value})}
-        >
-          <option value="">All Categories</option>
-          <option value="Engineering">Engineering</option>
-          <option value="Design">Design</option>
-          <option value="Marketing">Marketing</option>
-          <option value="Sales">Sales</option>
-          <option value="Business">Business</option>
-        </select>
+      <div className="form-row">
+        <div className="form-group">
+          <label className="required">Job Title</label>
+          <input 
+            type="text" 
+            name="title" 
+            placeholder="e.g., Frontend Developer" 
+            value={jobData.title} 
+            onChange={handleChange} 
+            required 
+            disabled={loading}
+          />
+        </div>
+        
+        <div className="form-group">
+          <label className="required">Location</label>
+          <input 
+            type="text" 
+            name="location" 
+            placeholder="e.g., Remote, New York" 
+            value={jobData.location} 
+            onChange={handleChange} 
+            required 
+            disabled={loading}
+          />
+        </div>
+      </div>
 
-        <input
-          type="text"
-          placeholder="Filter by location..."
-          value={filters.location}
-          onChange={(e) => setFilters({...filters, location: e.target.value})}
+      <div className="form-row">
+        <div className="form-group">
+          <label className="required">Job Type</label>
+          <select name="type" value={jobData.type} onChange={handleChange} disabled={loading}>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Internship">Internship</option>
+            <option value="Contract">Contract</option>
+            <option value="Remote">Remote</option>
+          </select>
+        </div>
+        
+        <div className="form-group">
+          <label>Category</label>
+          <select name="category" value={jobData.category} onChange={handleChange} disabled={loading}>
+            <option value="Engineering">Engineering</option>
+            <option value="Design">Design</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Sales">Sales</option>
+            <option value="Business">Business</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="form-section">
+        <h4>Compensation & Details</h4>
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>Salary Range</label>
+          <input 
+            type="text" 
+            name="salaryRange" 
+            placeholder="e.g., $50,000 - $70,000" 
+            value={jobData.salaryRange} 
+            onChange={handleChange} 
+            disabled={loading}
+          />
+        </div>
+        
+        <div className="form-group">
+          <label>Duration (for internships)</label>
+          <input 
+            type="text" 
+            name="duration" 
+            placeholder="e.g., 3 months, 6 months" 
+            value={jobData.duration} 
+            onChange={handleChange} 
+            disabled={loading}
+          />
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label>Required Skills</label>
+        <input 
+          type="text" 
+          name="skills" 
+          placeholder="e.g., React, JavaScript, Node.js" 
+          value={jobData.skills} 
+          onChange={handleChange} 
+          disabled={loading}
         />
       </div>
 
-      {/* Jobs Grid */}
-      <div className="jobs-grid">
-        {filteredJobs.length === 0 ? (
-          <div className="no-jobs">
-            <p>No jobs found matching your criteria.</p>
-          </div>
-        ) : (
-          filteredJobs.map(job => (
-            <div key={job._id} className="job-card">
-              <div className="job-header">
-                <h3>{job.title}</h3>
-                <span className="company">{job.companyName}</span>
-              </div>
-              
-              <div className="job-details">
-                <p><i className="fas fa-map-marker-alt"></i> {job.location}</p>
-                <p><i className="fas fa-briefcase"></i> {job.type}</p>
-                <p><i className="fas fa-dollar-sign"></i> {job.salaryRange || 'Salary not specified'}</p>
-                {job.category && <p><i className="fas fa-tag"></i> {job.category}</p>}
-                
-                <div className="job-description">
-                  {job.description.substring(0, 150)}...
-                </div>
-                
-                {job.skills && (
-                  <div className="job-skills">
-                    <strong>Skills:</strong> {job.skills}
-                  </div>
-                )}
-              </div>
-              
-              <div className="job-actions">
-                <button 
-                  className="apply-btn"
-                  onClick={() => handleApply(job._id)}
-                >
-                  Apply Now
-                </button>
-                <button className="save-btn">
-                  <i className="far fa-bookmark"></i> Save
-                </button>
-              </div>
-            </div>
-          ))
-        )}
+      <div className="form-section">
+        <h4>Job Description</h4>
       </div>
-    </div>
+
+      <div className="form-group">
+        <label className="required">Job Description</label>
+        <textarea 
+          name="description" 
+          placeholder="Describe the role, responsibilities, and what you're looking for..." 
+          value={jobData.description} 
+          onChange={handleChange} 
+          rows="5"
+          required
+          disabled={loading}
+        ></textarea>
+      </div>
+
+      <div className="form-group">
+        <label>Requirements</label>
+        <textarea 
+          name="requirements" 
+          placeholder="List the requirements and qualifications needed..." 
+          value={jobData.requirements} 
+          onChange={handleChange} 
+          rows="4"
+          disabled={loading}
+        ></textarea>
+      </div>
+
+      <button 
+        type="submit" 
+        className="primary-btn" 
+        disabled={loading}
+      >
+        {loading ? (
+          <>
+            <span className="loading-spinner"></span>
+            Posting Job...
+          </>
+        ) : (
+          'Post Job Opportunity'
+        )}
+      </button>
+
+      
+    </form>
   );
 };
 
-export default Jobs;
+export default JobForm;

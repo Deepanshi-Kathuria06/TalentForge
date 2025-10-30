@@ -1,0 +1,84 @@
+.profile-page {
+  display: flex;
+  gap: 30px;
+  padding: 30px;
+}
+
+.profile-left {
+  width: 25%;
+}
+
+.profile-right {
+  width: 75%;
+}
+
+.profile-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-card-avatar {
+  width: 100px;
+  border-radius: 50%;
+}
+
+.profile-view {
+  background: #fff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.profile-avatar-large {
+  width: 120px;
+  border-radius: 50%;
+}
+
+.profile-section {
+  margin-top: 20px;
+}
+
+.skills-list span {
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 5px 10px;
+  border-radius: 10px;
+  margin-right: 8px;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.edit-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.save-btn {
+  background: #1565c0;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+}
+
+.cancel-btn {
+  background: #ccc;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+}

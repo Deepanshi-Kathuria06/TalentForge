@@ -55,10 +55,10 @@ export const Landing = () => {
           <p className="hero-subtitle">
             This platform bridges the gap between <span className="highlight-text">top talent</span> and <span className="highlight-text">dream opportunities</span> in real-time, with the scale to power career transformations worldwide.
           </p>
-          <div className="cta-buttons">
+          {/* <div className="cta-buttons">
             <button className="primary-btn">Join the Network</button>
-            <button className="secondary-btn">See How It Works</button>
-          </div>
+            <button className="primary-btn">See How It Works</button>
+          </div> */}
         </div>
       </section>
 

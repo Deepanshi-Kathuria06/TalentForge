@@ -377,7 +377,7 @@ const ApplicationModal = ({ job, isOpen, onClose, onSuccess }) => {
 
               {/* Phone Number */}
               <div className="form-group">
-                <label htmlFor="phone">Phone Number *</label>
+                <label htmlFor="phone">Phone Number</label>
                 <input
                   id="phone"
                   type="tel"
@@ -410,7 +410,7 @@ const ApplicationModal = ({ job, isOpen, onClose, onSuccess }) => {
 
               {/* Resume Upload */}
               <div className="form-group">
-                <label htmlFor="resume">Upload Resume *</label>
+                <label htmlFor="resume">Upload Resume</label>
                 <input
                   id="resume"
                   type="file"
@@ -423,7 +423,7 @@ const ApplicationModal = ({ job, isOpen, onClose, onSuccess }) => {
                 <small>Accepted formats: PDF, DOC, DOCX (Max: 5MB)</small>
                 {resumeFile && (
                   <div className="file-preview">
-                    ✅ Selected: {resumeFile.name} ({(resumeFile.size / 1024 / 1024).toFixed(2)} MB)
+                    Selected: {resumeFile.name} ({(resumeFile.size / 1024 / 1024).toFixed(2)} MB)
                   </div>
                 )}
                 {errors.resume && <span className="error-text">{errors.resume}</span>}
@@ -431,7 +431,7 @@ const ApplicationModal = ({ job, isOpen, onClose, onSuccess }) => {
 
               {/* Cover Letter */}
               <div className="form-group">
-                <label htmlFor="coverLetter">Cover Letter *</label>
+                <label htmlFor="coverLetter">Cover Letter</label>
                 <textarea
                   id="coverLetter"
                   name="coverLetter"
@@ -443,7 +443,7 @@ const ApplicationModal = ({ job, isOpen, onClose, onSuccess }) => {
                   disabled={loading}
                   className={errors.coverLetter ? 'error' : ''}
                 />
-                <div className="character-count">
+                <div className={`character-count ${formData.coverLetter.length < 50 ? 'low' : 'good'}`}>
                   {formData.coverLetter.length} characters
                   {formData.coverLetter.length < 50 && ` (minimum 50 required)`}
                 </div>

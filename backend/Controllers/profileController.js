@@ -1,62 +1,55 @@
-import Profile from "../models/Profile.js";
-import User from "../models/User.js";
+import User from "../models/User.js"; // or your actual user/profile model
 
-// Get or create current user's profile
-export const createOrGetProfile = async (req, res) => {
-  try {
-    let profile = await Profile.findOne({ user: req.params.id }).populate("user", "name email");
-
-    if (!profile) {
-      const user = await User.findById(req.params.id);
-      if (!user) return res.status(404).json({ message: "User not found" });
-
-      profile = new Profile({
-        user: user._id,
-        role: user.role,
-        bio: "Welcome to my profile!",
-      });
-      await profile.save();
-    }
-
-    res.json(profile);
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-};
-
-// Get profile by ID
+// ✅ Get Profile by ID
 export const getProfileById = async (req, res) => {
   try {
-    const profile = await Profile.findOne({ user: req.params.id }).populate("user", "name email");
+    const userId = req.params.id;
+    const profile = await User.findById(userId);
     if (!profile) return res.status(404).json({ message: "Profile not found" });
-    res.json(profile);
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(200).json(profile);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
-// Update profile
+// ✅ Update Profile
 export const updateProfile = async (req, res) => {
   try {
-    const profile = await Profile.findOneAndUpdate(
-      { user: req.params.id },
-      { $set: req.body },
-      { new: true }
-    );
-    res.json(profile);
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    const userId = req.params.id;
+    const updates = req.body;
+    const profile = await User.findByIdAndUpdate(userId, updates, { new: true });
+    if (!profile) return res.status(404).json({ message: "Profile not found" });
+    res.status(200).json(profile);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
-// Search profiles by name
+// ✅ Create or Get Profile
+export const createOrGetProfile = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    let profile = await User.findById(userId);
+
+    if (!profile) {
+      profile = await User.create({ _id: userId, ...req.body });
+    }
+
+    res.status(200).json(profile);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// ✅ Search Profiles
 export const searchProfiles = async (req, res) => {
   try {
-    const { q } = req.query;
-    const users = await User.find({ name: new RegExp(q, "i") }).limit(10);
-    const profiles = await Profile.find({ user: { $in: users.map(u => u._id) } }).populate("user", "name profilePhoto");
-    res.json(profiles);
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    const query = req.query.q;
+    const profiles = await User.find({
+      name: { $regex: query, $options: "i" },
+    });
+    res.status(200).json(profiles);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };

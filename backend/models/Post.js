@@ -1,23 +1,47 @@
+// models/Post.js
 import mongoose from 'mongoose';
 
-const postSchema = new mongoose.Schema({
-  author: {
-    name: String,
-    avatar: String,
-    isVerified: Boolean,
-    role: String
+const commentSchema = new mongoose.Schema({
+  text: {
+    type: String,
+    required: true
   },
-  content: String,
-  images: [String],
-  likes: { type: Number, default: 0 },
-  comments: [
-    {
-      author: { name: String, avatar: String },
-      text: String,
-      timestamp: String
-    }
-  ],
-  shares: { type: Number, default: 0 },
-}, { timestamps: true });
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
 
+const postSchema = new mongoose.Schema({
+  content: {
+    type: String,
+    required: true
+  },
+  images: [{
+    type: String
+  }],
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  shares: {
+    type: Number,
+    default: 0
+  },
+  comments: [commentSchema]
+}, {
+  timestamps: true
+});
+
+// ✅ Use export default for ES6
 export default mongoose.model('Post', postSchema);
