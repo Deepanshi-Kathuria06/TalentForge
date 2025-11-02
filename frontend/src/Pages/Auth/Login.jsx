@@ -147,7 +147,7 @@ export const Login = () => {
             className="login-page-submit-button"
             disabled={loading}
           >
-            {loading ? 'Signing In...' : 'Sign In'}
+            {loading ? 'Login...' : 'Login'}
             <svg className="login-page-button-icon" viewBox="0 0 24 24">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>

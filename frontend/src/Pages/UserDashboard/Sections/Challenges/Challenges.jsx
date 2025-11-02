@@ -25,18 +25,53 @@ const ChallengesPage = () => {
   const loadChallenges = async () => {
     setLoading(true);
     try {
-      // Fetch from multiple platforms
-      const [leetcodeProblems, codechefProblems] = await Promise.all([
-        CodingApiService.fetchLeetCodeProblems(100),
-        CodingApiService.fetchCodeChefProblems()
-      ]);
-
-      const allProblems = [...leetcodeProblems, ...codechefProblems];
+      // Use local fallback problems instead of API calls to avoid CORS
+      const allProblems = CodingApiService.getAllFallbackProblems();
       setChallenges(allProblems);
     } catch (error) {
       console.error('Error loading challenges:', error);
-      // Use fallback data
-      const fallbackProblems = await CodingApiService.fetchLeetCodeProblems(50);
+      // Ultimate fallback with safe data structure
+      const fallbackProblems = [
+        {
+          id: 'leetcode-1',
+          title: 'Two Sum',
+          difficulty: 'easy',
+          tags: ['Array', 'Hash Table'],
+          platform: 'leetcode',
+          acceptance: '52.3%',
+          premium: false,
+          solved: false,
+          frequency: 'High',
+          points: 10,
+          description: 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.'
+        },
+        {
+          id: 'leetcode-2',
+          title: 'Add Two Numbers',
+          difficulty: 'medium',
+          tags: ['Linked List', 'Math', 'Recursion'],
+          platform: 'leetcode',
+          acceptance: '38.6%',
+          premium: false,
+          solved: false,
+          frequency: 'High',
+          points: 15,
+          description: 'You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.'
+        },
+        {
+          id: 'codechef-START01',
+          title: 'Number Mirror',
+          difficulty: 'easy',
+          tags: ['Beginner', 'Input/Output'],
+          platform: 'codechef',
+          acceptance: '85.2%',
+          premium: false,
+          solved: false,
+          frequency: 'High',
+          points: 10,
+          description: 'Write a program that accepts a number and outputs the same number.'
+        }
+      ];
       setChallenges(fallbackProblems);
     } finally {
       setLoading(false);
@@ -54,10 +89,8 @@ const ChallengesPage = () => {
 
   const handleSolveClick = async (challenge) => {
     try {
-      // Fetch full problem details
-      const problemDetails = await CodingApiService.fetchLeetCodeProblem(
-        challenge.title.toLowerCase().replace(/ /g, '-')
-      );
+      // Use the new method to get detailed problem data
+      const problemDetails = CodingApiService.getProblemDetails(challenge.id);
       navigate(`/solve/${challenge.id}`, { state: { problem: problemDetails } });
     } catch (error) {
       console.error('Error fetching problem details:', error);
@@ -67,22 +100,33 @@ const ChallengesPage = () => {
 
   const DifficultyBadge = ({ difficulty }) => (
     <span className={`difficulty-badge ${difficulty}`}>
-      {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+      {difficulty ? difficulty.charAt(0).toUpperCase() + difficulty.slice(1) : 'Unknown'}
     </span>
   );
 
   const PlatformBadge = ({ platform }) => (
     <span className={`platform-badge ${platform}`}>
-      {platform.charAt(0).toUpperCase() + platform.slice(1)}
+      {platform ? platform.charAt(0).toUpperCase() + platform.slice(1) : 'Unknown'}
     </span>
   );
 
   const AcceptanceBar = ({ acceptance }) => (
     <div className="acceptance-bar">
-      <div className="acceptance-fill" style={{width: acceptance}}></div>
-      <span className="acceptance-text">{acceptance}</span>
+      <div className="acceptance-fill" style={{width: acceptance || '0%'}}></div>
+      <span className="acceptance-text">{acceptance || 'N/A'}</span>
     </div>
   );
+
+  // Safe tag rendering function
+  const renderTags = (tags) => {
+    if (!tags || !Array.isArray(tags) || tags.length === 0) {
+      return <span className="no-tags">No tags</span>;
+    }
+    
+    return tags.map((tag, index) => (
+      <span key={index} className="problem-tag">{tag}</span>
+    ));
+  };
 
   if (loading) {
     return (
@@ -130,10 +174,13 @@ const ChallengesPage = () => {
               <span className="coins-reward">+1🪙</span>
             </div>
             <div className="daily-content">
-              <h4>Maximum Subarray</h4>
-              <p>Find the contiguous subarray with the largest sum</p>
+              <h4>Two Sum</h4>
+              <p>Find two numbers that add up to target</p>
               <DifficultyBadge difficulty="easy" />
-              <button className="daily-solve-btn">
+              <button 
+                className="daily-solve-btn"
+                onClick={() => navigate('/solve/leetcode-1')}
+              >
                 Solve Challenge
               </button>
             </div>
@@ -158,7 +205,16 @@ const ChallengesPage = () => {
           <div className="calendar-card">
             <h3>March 2024</h3>
             <div className="calendar-grid">
-              {/* Calendar content remains same */}
+              <div className="calendar-header">
+                <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+              </div>
+              <div className="calendar-days">
+                {Array.from({ length: 31 }, (_, i) => (
+                  <div key={i} className={`calendar-day ${i === 19 ? 'active' : ''}`}>
+                    {i + 1}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -221,49 +277,88 @@ const ChallengesPage = () => {
             </div>
             
             <div className="table-body">
-              {filteredChallenges.map(challenge => (
-                <div key={challenge.id} className="table-row">
-                  <div className="col-status">
-                    {challenge.solved && <span className="solved-icon">✓</span>}
-                    {challenge.premium && <span className="premium-icon">⭐</span>}
-                  </div>
-                  <div className="col-title">
-                    <span className="problem-title">{challenge.title}</span>
-                    <div className="problem-tags">
-                      {challenge.tags.map(tag => (
-                        <span key={tag} className="problem-tag">{tag}</span>
-                      ))}
+              {filteredChallenges.length === 0 ? (
+                <div className="no-problems">
+                  <p>No problems found matching your filters.</p>
+                </div>
+              ) : (
+                filteredChallenges.map(challenge => (
+                  <div key={challenge.id} className="table-row">
+                    <div className="col-status">
+                      {challenge.solved && <span className="solved-icon">✓</span>}
+                      {challenge.premium && <span className="premium-icon">⭐</span>}
+                    </div>
+                    <div className="col-title">
+                      <span className="problem-title">{challenge.title || 'Untitled Problem'}</span>
+                      <div className="problem-tags">
+                        {renderTags(challenge.tags)}
+                      </div>
+                    </div>
+                    <div className="col-platform">
+                      <PlatformBadge platform={challenge.platform} />
+                    </div>
+                    <div className="col-acceptance">
+                      <AcceptanceBar acceptance={challenge.acceptance} />
+                    </div>
+                    <div className="col-difficulty">
+                      <DifficultyBadge difficulty={challenge.difficulty} />
+                    </div>
+                    <div className="col-frequency">
+                      <span className={`frequency ${(challenge.frequency || 'Medium').toLowerCase()}`}>
+                        {challenge.frequency || 'Medium'}
+                      </span>
+                    </div>
+                    <div className="col-action">
+                      <button 
+                        className={`solve-btn ${challenge.solved ? 'solved' : ''}`}
+                        onClick={() => handleSolveClick(challenge)}
+                      >
+                        {challenge.solved ? 'Solved' : 'Solve'}
+                      </button>
                     </div>
                   </div>
-                  <div className="col-platform">
-                    <PlatformBadge platform={challenge.platform} />
-                  </div>
-                  <div className="col-acceptance">
-                    <AcceptanceBar acceptance={challenge.acceptance} />
-                  </div>
-                  <div className="col-difficulty">
-                    <DifficultyBadge difficulty={challenge.difficulty} />
-                  </div>
-                  <div className="col-frequency">
-                    <span className={`frequency ${challenge.frequency.toLowerCase()}`}>
-                      {challenge.frequency}
-                    </span>
-                  </div>
-                  <div className="col-action">
-                    <button 
-                      className={`solve-btn ${challenge.solved ? 'solved' : ''}`}
-                      onClick={() => handleSolveClick(challenge)}
-                    >
-                      {challenge.solved ? 'Solved' : 'Solve'}
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
 
-        {/* Right Sidebar remains same */}
+        {/* Right Sidebar */}
+        <div className="right-sidebar">
+          <div className="study-plan-card">
+            <h3>Study Plan</h3>
+            <p>Algorithm Fundamentals</p>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{width: '65%'}}></div>
+            </div>
+            <span>65% Complete</span>
+          </div>
+
+          <div className="progress-card">
+            <h3>Progress</h3>
+            <div className="progress-item">
+              <span>Easy</span>
+              <div className="progress-bar">
+                <div className="progress-fill easy" style={{width: '75%'}}></div>
+              </div>
+              <span>15/20</span>
+            </div>
+            <div className="progress-item">
+              <span>Medium</span>
+              <div className="progress-bar">
+                <div className="progress-fill medium" style={{width: '45%'}}></div>
+              </div>
+              <span>9/20</span>
+            </div>
+            <div className="progress-item">
+              <span>Hard</span>
+              <div className="progress-bar">
+                <div className="progress-fill hard" style={{width: '20%'}}></div>
+              </div>
+              <span>2/10</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

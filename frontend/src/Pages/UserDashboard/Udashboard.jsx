@@ -455,12 +455,8 @@ const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
             { icon: "fa-user", text: "Profile", page: "profile" },
             { icon: "fa-file-alt", text: "Resume Tools", page: "resume" },
             { icon: "fa-briefcase", text: "Jobs & Internships", page: "jobs" },
-            { icon: "fa-building", text: "Companies", page: "companies" },
-            { icon: "fa-users", text: "Networking", page: "network" },
             { icon: "fa-laptop-code", text: "Challenges", page: "challenges" },
             { icon: "fa-book", text: "Projects", page: "projects" },
-            { icon: "fa-bell", text: "Notifications", page: "notifications" },
-            { icon: "fa-cog", text: "Settings", page: "settings" },
           ].map((item, index) => (
             <div key={index} className="menu-group">
               <div

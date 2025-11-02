@@ -13,9 +13,10 @@ import authRoutes from "./routes/authRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
 import openrouterRoutes from "./routes/openrouterRoutes.js";
-import feedRoutes from "./routes/feed.js"; // ✅ KEEP ONLY FEED ROUTES
+import feedRoutes from "./routes/feed.js"; // 
 import userRoutes from './routes/user.js'; 
 import searchRoutes from './routes/searchRoutes.js';
+import codingRoutes from './routes/codingRoutes.js'
 
 dotenv.config();
 
@@ -27,10 +28,14 @@ const app = express();
 // ✅ CORS Setup
 app.use(cors({
   origin: [
+    "http://localhost:5179", 
     "http://localhost:5178",
-    "http://localhost:5173",
+    "http://localhost:5173", 
     "http://localhost:3000",
-    "http://127.0.0.1:5178"
+    "http://127.0.0.1:5178",
+  
+
+
   ],
   credentials: true
 }));
@@ -57,9 +62,10 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/openrouter", openrouterRoutes);
-app.use("/api/feed", feedRoutes); // ✅ ADD FEED ROUTES
+app.use("/api/feed", feedRoutes); 
 app.use("/api/users", userRoutes);
 app.use("/api/search", searchRoutes);
+app.use("/api/coding", codingRoutes);
 
 // ✅ Health Check
 app.get("/api/health", (req, res) => {

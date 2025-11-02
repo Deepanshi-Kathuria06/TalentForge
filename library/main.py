@@ -2,7 +2,6 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, List
 import re
-import spacy
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -10,16 +9,19 @@ import PyPDF2
 import docx
 import io
 
-
 app = FastAPI(title="ATS Checker API", version="1.0.0")
 
-# Add CORS middleware
+# Update CORS middleware to allow your React dev server
 app.add_middleware(
     CORSMiddleware,
- allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:5178",  # Your React dev server
+        "http://localhost:5173",  # Common Vite port
+        "http://localhost:3000",  # Common Create React App port
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
 )
 
 # Download required NLTK data
@@ -29,15 +31,6 @@ nltk.download('punkt')
 
 class ATSChecker:
     def __init__(self):
-        try:
-            self.nlp = spacy.load("en_core_web_sm")
-        except OSError:
-            # If model is not found, download it
-            import subprocess
-            import sys
-            subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"])
-            self.nlp = spacy.load("en_core_web_sm")
-            
         self.stop_words = set(stopwords.words('english'))
         self.lemmatizer = WordNetLemmatizer()
         
@@ -59,6 +52,18 @@ class ATSChecker:
             "experience", "work history", "education", "skills", 
             "summary", "objective", "projects", "certifications",
             "languages", "achievements"
+        ]
+        
+        # Common resume keywords for different fields
+        self.common_keywords = [
+            "python", "java", "javascript", "react", "node", "sql", "database",
+            "aws", "docker", "kubernetes", "git", "jenkins", "ci/cd",
+            "machine learning", "ai", "data analysis", "statistics",
+            "project management", "leadership", "team", "communication",
+            "problem solving", "analytical", "agile", "scrum",
+            "html", "css", "typescript", "angular", "vue", "rest", "api",
+            "mongodb", "mysql", "postgresql", "redis", "elasticsearch",
+            "linux", "windows", "macos", "cloud", "azure", "gcp"
         ]
     
     def extract_text_from_pdf(self, file_content):
@@ -99,20 +104,22 @@ class ATSChecker:
         return text
     
     def extract_keywords(self, text):
-        """Extract important keywords using spaCy"""
-        doc = self.nlp(text)
+        """Extract important keywords using simple text processing"""
+        # Preprocess text
+        cleaned_text = self.preprocess_text(text)
         
+        # Tokenize
+        words = cleaned_text.split()
+        
+        # Filter and lemmatize
         keywords = []
-        for token in doc:
-            # Filter out stop words, punctuation, and short words
-            if (not token.is_stop and 
-                not token.is_punct and 
-                not token.is_space and
-                len(token.text) > 2 and
-                token.pos_ in ['NOUN', 'PROPN', 'VERB', 'ADJ']):
+        for word in words:
+            if (word not in self.stop_words and 
+                len(word) > 2 and
+                word in self.common_keywords):
                 
                 # Lemmatize the word
-                lemma = self.lemmatizer.lemmatize(token.text)
+                lemma = self.lemmatizer.lemmatize(word)
                 keywords.append(lemma)
         
         return list(set(keywords))  # Remove duplicates
@@ -230,10 +237,12 @@ class ATSChecker:
         strengths = []
         if ats_score >= 70:
             strengths.append("Good overall structure and formatting")
-        if len(keywords) >= 20:
-            strengths.append("Strong keyword usage")
+        if len(keywords) >= 10:
+            strengths.append("Good keyword usage relevant to tech roles")
         if "experience" in text.lower() and "education" in text.lower():
             strengths.append("Contains essential sections")
+        if text.count('•') + text.count('-') > 5:
+            strengths.append("Good use of bullet points")
         
         # Generate improvements
         improvements = []
@@ -243,6 +252,8 @@ class ATSChecker:
             improvements.append("Add a professional summary or objective")
         if len(text.split()) < 400:
             improvements.append("Expand on your experience and achievements")
+        if len(keywords) < 10:
+            improvements.append("Include more industry-specific keywords")
         
         # Get top keywords for display
         top_keywords = keywords[:15] if len(keywords) > 15 else keywords
@@ -253,7 +264,8 @@ class ATSChecker:
             "atsCompatibility": compatibility,
             "strengths": strengths,
             "improvements": improvements,
-            "keywordMatches": keyword_matches
+            "keywordMatches": keyword_matches,
+            "keywordsFound": len(keywords)
         }
     
     def analyze_resume(self, file_content, file_extension):
@@ -296,6 +308,10 @@ async def analyze_resume(file: UploadFile = File(...)):
 @app.get("/")
 async def root():
     return {"message": "ATS Checker API is running"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "ATS Checker API"}
 
 if __name__ == "__main__":
     import uvicorn
