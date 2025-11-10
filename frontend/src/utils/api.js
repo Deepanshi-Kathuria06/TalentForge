@@ -2,12 +2,13 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL:
-    import.meta.env.MODE === "development"
+    import.meta.env.VITE_API_URL ||
+    (window.location.hostname === "localhost"
       ? "http://localhost:5000/api"
-      : import.meta.env.VITE_API_URL || "https://talentforge-w4t2.onrender.com/api",
+      : "https://talentforge-w4t2.onrender.com/api"),
 });
 
-console.log("🌍 API base URL:", import.meta.env.VITE_API_URL || "https://talentforge-w4t2.onrender.com/api");
+console.log("🌍 Active API Base URL:", API.defaults.baseURL);
 
 // ✅ Token attach
 API.interceptors.request.use((config) => {
