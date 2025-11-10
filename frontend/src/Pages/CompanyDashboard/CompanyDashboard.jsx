@@ -9,7 +9,7 @@ import API from '../../utils/api';
 import ScreeningSection from './sections/ScreeningSection';
 import DashboardNavbar from '../../components/DashboardNavbar';
 import '../../components/DashboardNavbar.css';
-import "../../assets/styles/jobForm.css";
+import "../../assets/styles/JobForm.css";
 
 const CompanyDashboard = () => {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
