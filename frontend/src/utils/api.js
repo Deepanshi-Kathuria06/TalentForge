@@ -14,6 +14,7 @@ API.interceptors.request.use((config) => {
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
+console.log("🌍 API base URL:", import.meta.env.VITE_API_URL);
 
 // ✅ Token expiry handling
 API.interceptors.response.use(
