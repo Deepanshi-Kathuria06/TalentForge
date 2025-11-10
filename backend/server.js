@@ -33,7 +33,8 @@ app.use(cors({
     "http://localhost:5173", 
     "http://localhost:3000",
     "http://127.0.0.1:5178",
-  "https://talent-forge.vercel.app" 
+   "https://talent-forge1.vercel.app",
+    "https://talent-forge1-git-main-deepanshi-kathuria06s-projects.vercel.app"
 
 
   ],
