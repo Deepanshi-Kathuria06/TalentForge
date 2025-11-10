@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Landing.css';
 import { Footer } from '../../components/Footer';
 import Navbar from '../../components/Navbar';
-import projectImage from '../../assets/images/ZeroWaste.png'; 
+import projectImage from '../../assets/images/Zerowaste.png'; 
 
 export const Landing = () => {
   const [activeResumeTab, setActiveResumeTab] = useState('editor');
