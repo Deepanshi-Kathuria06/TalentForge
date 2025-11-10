@@ -9,6 +9,5 @@
       }
     }
   ],
-  "framework": "vite",
-  "rootDirectory": "frontend"
+  "framework": "vite"
 }
